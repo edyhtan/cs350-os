@@ -1,0 +1,5 @@
+cd $HOME/cs350-os161/root
+cp /u/cs350/sys161/sys161.conf sys161.conf 
+
+
+sys161 kernel-ASST0

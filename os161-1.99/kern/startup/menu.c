@@ -70,7 +70,15 @@ getinterval(time_t s1, uint32_t ns1, time_t s2, uint32_t ns2,
 
 ////////////////////////////////////////////////////////////
 //
-// Command menu functions 
+// Command menu functions
+
+
+static
+void
+cmd_DBTHREAD (){
+	dbflags = DB_THREADS;
+	Kprintf("Thread debugging message enabled\n");
+}
 
 /*
  * Function for a thread that runs an arbitrary userlevel program by
@@ -437,6 +445,7 @@ static const char *opsmenu[] = {
 	"[sync]    Sync filesystems          ",
 	"[panic]   Intentional panic         ",
 	"[q]       Quit and shut down        ",
+	//"[dth]	   Toggle thread debugging   ",
 	NULL
 };
 
@@ -549,6 +558,7 @@ static struct {
 	{ "q",		cmd_quit },
 	{ "exit",	cmd_quit },
 	{ "halt",	cmd_quit },
+	{ "dth" ,   cmd_DBTHREAD},
 
 #if OPT_SYNCHPROBS
 	/* in-kernel synchronization problem(s) */

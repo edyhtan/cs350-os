@@ -75,7 +75,7 @@ getinterval(time_t s1, uint32_t ns1, time_t s2, uint32_t ns2,
 
 static
 void
-cmd_DBTHREAD (){
+cmd_DBTHREAD (int narg, char **args){
 	dbflags = DB_THREADS;
 	Kprintf("Thread debugging message enabled\n");
 }
@@ -445,8 +445,7 @@ static const char *opsmenu[] = {
 	"[sync]    Sync filesystems          ",
 	"[panic]   Intentional panic         ",
 	"[q]       Quit and shut down        ",
-	"[dth]	   Toggle thread debugging   ",
-	NULL
+	"[dth]	   Toggle thread debugging   "
 };
 
 static

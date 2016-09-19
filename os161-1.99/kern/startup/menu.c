@@ -74,14 +74,16 @@ getinterval(time_t s1, uint32_t ns1, time_t s2, uint32_t ns2,
 
 
 static
-void
+int
 cmd_DBTHREAD (int narg, char **args){
 
     (void) narg;
     (void) args;
-    
+
 	dbflags = DB_THREADS;
 	kprintf("Thread debugging message enabled\n");
+
+    return 0;
 }
 
 /*
@@ -561,7 +563,7 @@ static struct {
 	{ "q",		cmd_quit },
 	{ "exit",	cmd_quit },
 	{ "halt",	cmd_quit },
-	{ "dth" ,       cmd_DBTHREAD},
+	{ "dth" ,   cmd_DBTHREAD},
 
 #if OPT_SYNCHPROBS
 	/* in-kernel synchronization problem(s) */

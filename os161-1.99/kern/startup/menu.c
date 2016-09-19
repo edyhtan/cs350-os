@@ -77,7 +77,7 @@ static
 void
 cmd_DBTHREAD (int narg, char **args){
 	dbflags = DB_THREADS;
-	Kprintf("Thread debugging message enabled\n");
+	kprintf("Thread debugging message enabled\n");
 }
 
 /*

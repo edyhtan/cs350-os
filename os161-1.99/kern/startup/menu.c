@@ -558,7 +558,7 @@ static struct {
 	{ "q",		cmd_quit },
 	{ "exit",	cmd_quit },
 	{ "halt",	cmd_quit },
-	{ "dth" ,   cmd_DBTHREAD},
+	{ "dth" ,       cmd_DBTHREAD},
 
 #if OPT_SYNCHPROBS
 	/* in-kernel synchronization problem(s) */

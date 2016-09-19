@@ -76,6 +76,10 @@ getinterval(time_t s1, uint32_t ns1, time_t s2, uint32_t ns2,
 static
 void
 cmd_DBTHREAD (int narg, char **args){
+
+    (void) narg;
+    (void) args;
+    
 	dbflags = DB_THREADS;
 	kprintf("Thread debugging message enabled\n");
 }

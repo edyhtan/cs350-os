@@ -164,6 +164,7 @@ lock_create(const char *name)
         lock->lk = false;
         lock->held = false;
         lock->lock_wc = wchan_create(lock->lk_name);
+        spinlock_init(lock->spl);
         
         if (lock->lk_name == NULL) {
                 kfree(lock);
@@ -188,12 +189,16 @@ lock_acquire(struct lock *lock)
        KASSERT(lock != NULL);
        KASSERT(!lock_do_i_hold(lock));
        
+       spinlock.aquire(lock->spl);
+       
        while (lock->held){
            wchan_sleep(lock->lock_wc);
        }
        
        lock->current_thread = curthread;
        lock->held = true;
+       
+       spinlock.release(lock->spl);
 }
 
 void
@@ -204,9 +209,11 @@ lock_release(struct lock *lock)
         KASSERT(lock->held);
         KASSERT(lock_do_i_hold(lock));
         
+        spinlock.aquire(lock->spl);
         lock->held = false;
         lock->current_thread = NULL;
         wchan_wakeone(lock->lock_wc);
+        spinlock.release(lock->spl);
 }
 
 bool

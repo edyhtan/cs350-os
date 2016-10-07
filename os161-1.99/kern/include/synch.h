@@ -36,7 +36,6 @@
 
 
 #include <spinlock.h>
-#include <stdbool.h>
 
 /*
  * Dijkstra-style semaphore.

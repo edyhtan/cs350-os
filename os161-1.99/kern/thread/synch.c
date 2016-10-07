@@ -187,8 +187,8 @@ lock_acquire(struct lock *lock)
 {
        KASSERT(lock != NULL);
        
-       struct spinlock *spl;
-       spinlock_init(spl);
+       //struct spinlock *spl;
+       //spinlock_init(spl);
        //spinlock_acquire(spl);
 
        KASSERT(!lock_do_i_hold(lock));
@@ -201,7 +201,7 @@ lock_acquire(struct lock *lock)
        lock->held = true;
        
        //spinlock_release(spl);
-       spinlock_cleanup(spl);
+       //spinlock_cleanup(spl);
 }
 
 void
@@ -212,8 +212,8 @@ lock_release(struct lock *lock)
         KASSERT(lock->held);
         KASSERT(lock_do_i_hold(lock));
         
-        struct spinlock *spl;
-        spinlock_init(spl);
+        //struct spinlock *spl;
+        //spinlock_init(spl);
         //spinlock_acquire(spl);
         
         lock->held = false;
@@ -221,7 +221,7 @@ lock_release(struct lock *lock)
         wchan_wakeone(lock->lock_wc);
         
         //spinlock_release(spl);
-        spinlock_cleanup(spl);
+        //spinlock_cleanup(spl);
 }
 
 bool

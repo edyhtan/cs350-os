@@ -31,6 +31,7 @@
  * Synchronization primitives.
  * The specifications of the functions are in synch.h.
  */
+ 
 
 #include <typxes.h>
 #include <lib.h>

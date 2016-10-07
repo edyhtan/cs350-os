@@ -33,8 +33,8 @@
 /*
  * Header file for synchronization primitives.
  */
-
-#ifndef NULL
+ 
+ 
 #define NULL 0
 
 #include <spinlock.h>

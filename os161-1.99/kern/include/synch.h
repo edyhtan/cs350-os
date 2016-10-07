@@ -38,6 +38,8 @@
 #include <spinlock.h>
 #include <thread.h>
 
+struct thread;
+
 /*
  * Dijkstra-style semaphore.
  *

@@ -179,6 +179,7 @@ lock_destroy(struct lock *lock)
 {
         KASSERT(lock != NULL);
         wchan_destroy(lock->lock_wc);
+        spinlock_cleanup(lock->spl);
         kfree(lock->lk_name);
         kfree(lock);
 }
@@ -188,6 +189,7 @@ lock_acquire(struct lock *lock)
 {
        KASSERT(lock != NULL);
        KASSERT(!lock_do_i_hold(lock));
+       KASSERT(lock->spl !NULL);
        
        spinlock_acquire(lock->spl);
        

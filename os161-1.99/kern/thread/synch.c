@@ -152,6 +152,7 @@ V(struct semaphore *sem)
 struct lock *
 lock_create(const char *name)
 {
+        KASSERT(name != NULL);
         struct lock *lock;
 
         lock = kmalloc(sizeof(struct lock));
@@ -160,7 +161,9 @@ lock_create(const char *name)
         }
 
         lock->lk_name = kstrdup(name);
-        lock->lk = false; 
+        lock->lk = false;
+        lock->held = false;
+        lock->wchan = wchan_create(lock_lk_name);
         
         if (lock->lk_name == NULL) {
                 kfree(lock);
@@ -174,8 +177,7 @@ void
 lock_destroy(struct lock *lock)
 {
         KASSERT(lock != NULL);
-
-        
+        wchan_destroy(lock->lock_wc);
         kfree(lock->lk_name);
         kfree(lock);
 }
@@ -183,35 +185,38 @@ lock_destroy(struct lock *lock)
 void
 lock_acquire(struct lock *lock)
 {
-        if (lock->current_thread != NULL)
-            return ;
-            
-        while (Xchrg(true, lock->lk) == true){
-            // add current thread to the lock
-            lock->current_thread = curthread;
-        }
+       KASSERT(lock != NULL);
+       KASSERT(!lock_do_i_hold(lock));
+       
+       while (lock->held){
+           wchan_sleep(lock->lock_wc);
+       }
+       
+       lock->current_thread = curthread;
+       lock->held = true;
 }
 
 void
 lock_release(struct lock *lock)
 {
-        // Write this
-        if (lock_do_i_hold(lock)){
-            lock->lk = false;
-            lock->current_thread = NULL;
-        }
-
-       //(void)lock;  // suppress warning until code gets written
+        // assertion
+        KASSERT(lock != NULL);
+        KASSERT(lock->held);
+        KASSERT(lock_do_i_hold(lock));
+        
+        lock->held = false;
+        lock->current_thread = NULL;
+        wchan_wakeone(lock->lock_wc);
 }
 
 bool
 lock_do_i_hold(struct lock *lock)
 {
-    if (lock == NULL)
-        return false;
-    else{
-        return lock->current_thread == curthread;
-    }
+    KASSERT(lock != NULL);
+    
+    if (!lock->held) return false;
+    
+    return lock->current_thread == curthread;
 }
 
 ////////////////////////////////////////////////////////////

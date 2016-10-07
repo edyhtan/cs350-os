@@ -528,6 +528,7 @@ set(SOURCE_FILES
     root/include/time.h
     root/include/unistd.h)
 
-add_executable(cs350_os161 ${SOURCE_FILES})
+include_directories( /User/ED/cs350-os161/os161-1.99/kern )
+include_directories( )
 
-include_directories(/User/ED/cs350-os161/kern)
+add_executable(cs350_os161 ${SOURCE_FILES})

@@ -30,7 +30,6 @@
 #ifndef _CPU_H_
 #define _CPU_H_
 
-
 #include <spinlock.h>
 #include <threadlist.h>
 #include <machine/vm.h>  /* for TLBSHOOTDOWN_MAX */

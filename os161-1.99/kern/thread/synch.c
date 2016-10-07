@@ -32,13 +32,14 @@
  * The specifications of the functions are in synch.h.
  */
 
-#include <types.h>
+#include <typxes.h>
 #include <lib.h>
 #include <spinlock.h>
 #include <wchan.h>
 #include <thread.h>
 #include <current.h>
 #include <synch.h>
+#include "../include/synch.h"
 
 ////////////////////////////////////////////////////////////
 //
@@ -158,12 +159,12 @@ lock_create(const char *name)
         }
 
         lock->lk_name = kstrdup(name);
+        lock->lk = false; 
+        
         if (lock->lk_name == NULL) {
                 kfree(lock);
                 return NULL;
         }
-        
-        // add stuff here as needed
         
         return lock;
 }
@@ -173,7 +174,6 @@ lock_destroy(struct lock *lock)
 {
         KASSERT(lock != NULL);
 
-        // add stuff here as needed
         
         kfree(lock->lk_name);
         kfree(lock);
@@ -182,27 +182,35 @@ lock_destroy(struct lock *lock)
 void
 lock_acquire(struct lock *lock)
 {
-        // Write this
-
-        (void)lock;  // suppress warning until code gets written
+        if (lock->current_thread != NULL)
+            return ;
+            
+        while (Xchrg(true, lock->lk) == true){
+            // add current thread to the lock
+            lock->current_thread = curthread;
+        }
 }
 
 void
 lock_release(struct lock *lock)
 {
         // Write this
+        if (lock_do_i_hold(lock)){
+            lock->lk = false;
+            lock->current_thread = NULL;
+        }
 
-        (void)lock;  // suppress warning until code gets written
+       //(void)lock;  // suppress warning until code gets written
 }
 
 bool
 lock_do_i_hold(struct lock *lock)
 {
-        // Write this
-
-        (void)lock;  // suppress warning until code gets written
-
-        return true; // dummy until code gets written
+    if (lock == NULL)
+        return false;
+    else{
+        return lock->current_thread == curthread;
+    }
 }
 
 ////////////////////////////////////////////////////////////

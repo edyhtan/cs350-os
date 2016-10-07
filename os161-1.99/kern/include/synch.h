@@ -36,6 +36,7 @@
 
 
 #include <spinlock.h>
+#include <stdbool.h>
 
 /*
  * Dijkstra-style semaphore.
@@ -47,7 +48,7 @@ struct semaphore {
         char *sem_name;
 	struct wchan *sem_wchan;
 	struct spinlock sem_lock;
-        volatile int sem_count;
+	volatile int sem_count;
 };
 
 struct semaphore *sem_create(const char *name, int initial_count);
@@ -74,6 +75,8 @@ void V(struct semaphore *);
  */
 struct lock {
         char *lk_name;
+		bool lk;
+		thread *current_thread;
         // add what you need here
         // (don't forget to mark things volatile as needed)
 };

@@ -45,7 +45,6 @@ struct cpu;
 /* get machine-dependent defs */
 #include <machine/thread.h>
 
-
 /* Size of kernel stacks; must be power of 2 */
 #define STACK_SIZE 4096
 

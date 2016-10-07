@@ -189,7 +189,7 @@ lock_acquire(struct lock *lock)
        
        struct spinlock *spl;
        spinlock_init(spl);
-       spinlock_acquire(spl);
+       //spinlock_acquire(spl);
 
        KASSERT(!lock_do_i_hold(lock));
        
@@ -200,7 +200,7 @@ lock_acquire(struct lock *lock)
        lock->current_thread = curthread;
        lock->held = true;
        
-       spinlock_release(spl);
+       //spinlock_release(spl);
        spinlock_cleanup(spl);
 }
 
@@ -214,11 +214,13 @@ lock_release(struct lock *lock)
         
         struct spinlock *spl;
         spinlock_init(spl);
-        spinlock_acquire(spl);
+        //spinlock_acquire(spl);
+        
         lock->held = false;
         lock->current_thread = NULL;
         wchan_wakeone(lock->lock_wc);
-        spinlock_release(spl);
+        
+        //spinlock_release(spl);
         spinlock_cleanup(spl);
 }
 

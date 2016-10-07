@@ -163,7 +163,7 @@ lock_create(const char *name)
         lock->lk_name = kstrdup(name);
         lock->lk = false;
         lock->held = false;
-        lock->wchan = wchan_create(lock_lk_name);
+        lock->wchan = wchan_create(lock->lk_name);
         
         if (lock->lk_name == NULL) {
                 kfree(lock);

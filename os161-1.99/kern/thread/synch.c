@@ -226,8 +226,8 @@ lock_release(struct lock *lock)
         lock->held = false;
         lock->current_thread = NULL;
         
-        wchan_wakeone(&lock->wchan);
-        spinlock_release(lock->spl);
+        wchan_wakeone(lock->wchan);
+        spinlock_release(&lock->spl);
 }
 
 bool

@@ -81,7 +81,7 @@ struct lock {
 		bool lk;
         struct wchan *wchan;
 		struct thread *current_thread;
-        struct spinlock *spl;
+        struct spinlock spl;
         bool held;
         // (don't forget to mark things volatile as needed)
 };

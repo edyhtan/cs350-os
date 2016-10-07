@@ -33,7 +33,7 @@
  */
  
 
-#include <typxes.h>
+#include <types.h>
 #include <lib.h>
 #include <spinlock.h>
 #include <wchan.h>

@@ -34,8 +34,6 @@
  * Header file for synchronization primitives.
  */
  
- 
-#define NULL 0
 
 #include <spinlock.h>
 #include <thread.h>

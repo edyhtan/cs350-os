@@ -70,9 +70,9 @@ setRules(Direction o, Direction d){
         traffic_light = es;
     }else if (o == south && d == west){
         traffic_light = sw;
-    }else if (o == west && d = north){
+    }else if (o == west && d == north){
         traffic_light = wn;
-    }else if (o == north && d = east){
+    }else if (o == north && d == east){
         traffic_light = ne;
     }else {
         return false;
@@ -199,7 +199,7 @@ intersection_after_exit(Direction origin, Direction destination)
     lock_acquire(mutex);
   
     if (first_reach){
-      first_reached = false;
+      first_reach = false;
       setWarning();
     }
 

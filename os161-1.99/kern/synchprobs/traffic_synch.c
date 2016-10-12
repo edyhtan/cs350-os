@@ -18,10 +18,89 @@
  * declare other global variables if your solution requires them.
  */
 
-/*
- * replace this with declarations of any synchronization and other variables you need here
- */
+enum Passes
+{
+    initial = -1;
+    warning = 0;
+    ew = 1;
+    ns = 2;
+    es = 3;
+    sw = 4;
+    wn = 5;
+    ne = 6;
+}
+
+typedef enum Passes Pass;
+
+
+static Pass traffic_light = initial; 
+static volatile bool first_reach = false;
+static volatile int carPasses = 0;
+
 static struct semaphore *intersectionSem;
+static struct lock *mutex;
+static struct cv *cv_traffic;
+
+void 
+setWarning(){
+    traffic_light = warning;
+}
+
+void 
+setInitial(){
+    traffic_light = initial;
+}
+
+bool
+setRules(Direction o, Direction d){
+    if (traffic_light != initial){
+        return false;
+    }else if ((o == east && d == west) || (o == west && d == east)){
+        traffic_light = ew;
+    }else if ((o == north && d == south) || (o == south && d == north)){
+        traffic_light = ns;
+    }else if (o == east && d == south){
+        traffic_light = es;
+    }else if (o == south && d == west){
+        traffic_light = sw;
+    }else if (o == west && d = north){
+        traffic_light = wn;
+    }else if (o == north && d = east){
+        traffic_light = ne;
+    }else {
+        return false;
+    }
+    
+    return true;
+}
+
+bool
+canPass(Direction o, Direction d){
+    KASSERT(traffic_light != initial);
+    if (traffic_light == warning){
+        return false;
+    }else if (traffic_light == ew){
+        return (o == east && d == west) || (o == west && d = east);
+    }else if (traffic_light == ns){
+        return (o == north && d == south) || (o == south && d == north);
+    }else if (traffic_light == es){
+        return (o == east && d == south);
+    }else if  (traffic_light == sw){
+        return (o == south && d == west);
+    }else if (traffic_light == wn){
+        return (o == west && d == north);
+    }else if (traffic_light == ne){
+        return (o == north && d == east);
+    }else {
+        panic("uh-oh");
+        return false;
+    }
+}
+
+bool
+isRightTurn(Direction o, Direction d){
+    return (o == east && d == north) || (o == north && d == west) || (o == west && d == south) || (o == south && d == east);
+}
 
 
 /* 
@@ -34,12 +113,13 @@ static struct semaphore *intersectionSem;
 void
 intersection_sync_init(void)
 {
-  /* replace this default implementation with your own implementation */
-
-  intersectionSem = sem_create("intersectionSem",1);
-  if (intersectionSem == NULL) {
-    panic("could not create intersection semaphore");
-  }
+    mutex = lock_create("traffic lock");
+    cv_traffic = cv_create("traffic cv");
+    
+    if (mutex == NULL || cv == NULL){
+        panic("uh-oh.....");
+    }
+    
   return;
 }
 
@@ -53,9 +133,11 @@ intersection_sync_init(void)
 void
 intersection_sync_cleanup(void)
 {
-  /* replace this default implementation with your own implementation */
-  KASSERT(intersectionSem != NULL);
-  sem_destroy(intersectionSem);
+  KASSERT(mutex != NULL);
+  KASSERT(cv_traffic != NULL)
+  lock_destroy(mutex);
+  cv_destroy(cv_traffic);
+
 }
 
 
@@ -73,13 +155,20 @@ intersection_sync_cleanup(void)
  */
 
 void
-intersection_before_entry(Direction origin, Direction destination) 
+intersection_before_entry(Direction o, Direction d) 
 {
-  /* replace this default implementation with your own implementation */
-  (void)origin;  /* avoid compiler complaint about unused parameter */
-  (void)destination; /* avoid compiler complaint about unused parameter */
-  KASSERT(intersectionSem != NULL);
-  P(intersectionSem);
+    KASSERT(mutex != NULL);
+    KASSERT(cv_traffic != NULL);
+    
+    lock_acquire(mutex);
+    while (!isRightTurn(o,d) || !setRules(o,d) || !canPass()){
+        cv_wait(cv_traffic, mutex);
+    }
+    
+    if (!isRightTurn(o,d))
+        carPasses++;
+        
+    lock_release(mutex);
 }
 
 
@@ -97,9 +186,21 @@ intersection_before_entry(Direction origin, Direction destination)
 void
 intersection_after_exit(Direction origin, Direction destination) 
 {
-  /* replace this default implementation with your own implementation */
-  (void)origin;  /* avoid compiler complaint about unused parameter */
-  (void)destination; /* avoid compiler complaint about unused parameter */
-  KASSERT(intersectionSem != NULL);
-  V(intersectionSem);
+    lock_acquire(mutex);
+  
+    if (first_reached){
+      first_reached = false;
+      setWarning();
+      }
+
+    KASSERT(traffic_light == warning);
+    
+    if (!isRightTurn(origin, destination)) 
+        carPasses--;
+  
+    if (carPasses == 0)
+        setInitial();
+      
+    cv_broadcast(cv_traffic, mutex);
+    lock_release(mutex);
 }

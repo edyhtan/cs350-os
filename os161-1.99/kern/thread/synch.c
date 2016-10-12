@@ -120,11 +120,11 @@ P(struct semaphore *sem)
 		 * Exercise: how would you implement strict FIFO
 		 * ordering?
 		 */
-		wchan_lock(sem->sem_wchan);
-		spinlock_release(&sem->sem_lock);
-                wchan_sleep(sem->sem_wchan);
+            wchan_lock(sem->sem_wchan);
+            spinlock_release(&sem->sem_lock);
+            wchan_sleep(sem->sem_wchan);
 
-		spinlock_acquire(&sem->sem_lock);
+            spinlock_acquire(&sem->sem_lock);
         }
         KASSERT(sem->sem_count > 0);
         sem->sem_count--;
@@ -292,7 +292,7 @@ cv_wait(struct cv *cv, struct lock *lock)
     wchan_lock(cv->wchan);
     lock_release(lock);
     wchan_sleep(cv->wchan);
-    lock_acquire(lock);
+    lock_acquire(lock)
 }
 
 void
@@ -301,6 +301,7 @@ cv_signal(struct cv *cv, struct lock *lock)
 	(void)lock;  // suppress warning until code gets written
     
     KASSERT(cv != NULL);
+    KASSERT(lock_do_i_hold(lock));
     wchan_wakeone(cv->wchan);
 }
 
@@ -310,5 +311,6 @@ cv_broadcast(struct cv *cv, struct lock *lock)
 	(void)lock;  // suppress warning until code gets written
     
     KASSERT(cv != NULL);
+    KASSERT(lock_do_i_hold(lock));
     wchan_wakeall(cv->wchan);
 }

@@ -32,8 +32,8 @@ enum Passes{
 };
 */
 
-static volatile int volatile *enter = {0, 0, 0, 0};
-static volatile int volatile *exit = {0, 0, 0, 0};
+static volatile int volatile enter[4] = {0, 0, 0, 0};
+static volatile int volatile exit[4] = {0, 0, 0, 0};
 
 static volatile int total = 0;
 static volatile bool first_entry = false;
@@ -42,27 +42,35 @@ static volatile bool warning = false;
 static struct lock *mutex;
 static struct cv *cv_traffic;
 
+void changeEnter(Direction o, int i);
+void changeExit(Direction o, int i);
+bool parallel(Direction o , Directoin d);
+bool opposite(Direction o, Direction d);
+bool legalRightTurn(Direction o, Direction d);
+bool checkConstraint(Direction o, Directoin d);
 
-void changeEnter(Direction o, int i){
+void 
+changeEnter(Direction o, int i){
     enter[o] += i;
 }
 
-void changeExit(Direction o, int i){
+void 
+changeExit(Direction o, int i){
     exit[o] += i;
 }
 
 bool
-Parallel(Direction o, Direction d){
+parallel(Direction o, Direction d){
     return enter[o] > 0 && exit[d] > 0;
 }
 
 bool
-Opposite(Direction o, Direction d){
+opposite(Direction o, Direction d){
     return enter[d] > 0 && exit[o] > 0;
 }
 
 bool
-LegalRightTurn(Direction o, Direction d){
+legalRightTurn(Direction o, Direction d){
     if (exit[d] != 0){
         return false;
     }else if (o == north && d == west){
@@ -77,7 +85,7 @@ checkConstraint(Direction o, Direction d){
     if (total == 0)
         //first_entry = true;
         return true;
-    else if (Parallel(o,d) || Opposite(o,d) || LegalRightTurn(o,d))
+    else if (parallel(o,d) || opposite(o,d) || legalRightTurn(o,d))
         return true;
     
     return false;

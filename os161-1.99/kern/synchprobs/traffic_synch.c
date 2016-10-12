@@ -17,20 +17,7 @@
  * primitives, e.g., semaphores, locks, condition variables.   You are also free to 
  * declare other global variables if your solution requires them.
  */
-/*
-enum Passes;
-
-enum Passes{
-    initial = -1,
-    warning = 0,
-    ew = 1,
-    ns = 2,
-    es = 3,
-    sw = 4,
-    wn = 5,
-    ne = 6
-};
-*/
+ 
 
 static volatile int volatile enter[4] = {0, 0, 0, 0};
 static volatile int volatile exit[4] = {0, 0, 0, 0};
@@ -44,7 +31,7 @@ static struct cv *cv_traffic;
 
 void changeEnter(Direction o, int i);
 void changeExit(Direction o, int i);
-bool parallel(Direction o , Directoin d);
+bool parallel(Direction o, Directoin d);
 bool opposite(Direction o, Direction d);
 bool legalRightTurn(Direction o, Direction d);
 bool checkConstraint(Direction o, Directoin d);

@@ -98,10 +98,10 @@ canPass(Direction o, Direction d){
         return (o == west && d == north);
     }else if (traffic_light == ne){
         return (o == north && d == east);
-    }else {
-        panic("uh-oh");
-        return false;
     }
+
+    panic("uh-oh");
+    return false;
 }
 
 bool
@@ -123,7 +123,7 @@ intersection_sync_init(void)
     mutex = lock_create("traffic lock");
     cv_traffic = cv_create("traffic cv");
     
-    if (mutex == NULL || cv == NULL){
+    if (mutex == NULL || cv_traffic == NULL){
         panic("uh-oh.....");
     }
     
@@ -141,7 +141,7 @@ void
 intersection_sync_cleanup(void)
 {
   KASSERT(mutex != NULL);
-  KASSERT(cv_traffic != NULL)
+  KASSERT(cv_traffic != NULL);
   lock_destroy(mutex);
   cv_destroy(cv_traffic);
 
@@ -168,9 +168,12 @@ intersection_before_entry(Direction o, Direction d)
     KASSERT(cv_traffic != NULL);
     
     lock_acquire(mutex);
-    while (!isRightTurn(o,d) || !setRules(o,d) || !canPass()){
+    while (!isRightTurn(o,d) || !setRules(o,d) || !canPass(o,d)){
         cv_wait(cv_traffic, mutex);
     }
+    
+    if (firstReach == false)
+        firstReach = true;
     
     if (!isRightTurn(o,d))
         carPasses++;
@@ -195,10 +198,10 @@ intersection_after_exit(Direction origin, Direction destination)
 {
     lock_acquire(mutex);
   
-    if (first_reached){
+    if (first_reach){
       first_reached = false;
       setWarning();
-      }
+    }
 
     KASSERT(traffic_light == warning);
     

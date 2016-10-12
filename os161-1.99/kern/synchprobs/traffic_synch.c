@@ -38,7 +38,6 @@ static Pass traffic_light = initial;
 static volatile bool first_reach = false;
 static volatile int carPasses = 0;
 
-static struct semaphore *intersectionSem;
 static struct lock *mutex;
 static struct cv *cv_traffic;
 

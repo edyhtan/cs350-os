@@ -208,8 +208,6 @@ lock_acquire(struct lock *lock)
        lock->current_thread = curthread;
        lock->held = true;
        spinlock_release(&(lock->spl));
-       
-   
 }
 
 void

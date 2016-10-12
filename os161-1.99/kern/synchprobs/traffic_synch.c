@@ -166,9 +166,10 @@ intersection_before_entry(Direction o, Direction d)
 {
     KASSERT(mutex != NULL);
     KASSERT(cv_traffic != NULL);
-    kprintf("entering");
     
+    kprintf("entering");
     lock_acquire(mutex);
+    kprintf("entering");
     while (!isRightTurn(o,d) || !setRules(o,d) || !canPass(o,d)){
         cv_wait(cv_traffic, mutex);
     }

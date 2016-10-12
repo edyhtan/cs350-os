@@ -46,7 +46,7 @@ void setInitial(void);
 bool setRules(Direction o, Direction d);
 bool canPass(Direction o, Direction d);
 bool isRightTurn(Direction o, Direction d);
-bool isLegalRightTurn(Directoin o, Direction d);
+bool isLegalRightTurn(Direction o, Direction d);
 
 void 
 setWarning(){

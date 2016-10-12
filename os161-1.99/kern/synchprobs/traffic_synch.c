@@ -194,7 +194,7 @@ intersection_before_entry(Direction o, Direction d)
         cv_wait(cv_traffic, mutex);
     }
     
-    kprintf("car enter: %d %d", o, d);
+    kprintf("car enter: %d %d\n", o, d);
     
     if (first_reach == false)
         first_reach = true;

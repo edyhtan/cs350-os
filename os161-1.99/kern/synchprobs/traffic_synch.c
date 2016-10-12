@@ -18,16 +18,17 @@
  * declare other global variables if your solution requires them.
  */
 
-enum Passes
-{
-    initial = -1;
-    warning = 0;
-    ew = 1;
-    ns = 2;
-    es = 3;
-    sw = 4;
-    wn = 5;
-    ne = 6;
+enum Passes;
+
+enum Passes{
+    initial = -1,
+    warning = 0,
+    ew = 1,
+    ns = 2,
+    es = 3,
+    sw = 4,
+    wn = 5,
+    ne = 6
 };
 
 typedef enum Passes Pass;

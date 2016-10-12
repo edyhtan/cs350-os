@@ -277,7 +277,7 @@ cv_destroy(struct cv *cv)
 
         // add stuff here as needed
         kfree(cv->cv_name);
-        kfree(cv->wchan);
+        wchan_destroy(cv->wchan);
         kfree(cv);
 }
 

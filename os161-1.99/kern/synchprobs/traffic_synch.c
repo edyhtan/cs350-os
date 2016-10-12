@@ -167,13 +167,13 @@ intersection_before_entry(Direction o, Direction d)
     KASSERT(mutex != NULL);
     KASSERT(cv_traffic != NULL);
     
-    kprintf("entering");
     lock_acquire(mutex);
-    kprintf("entering");
     while (!isRightTurn(o,d) || !setRules(o,d) || !canPass(o,d)){
+        kprintf("entering\n");
         cv_wait(cv_traffic, mutex);
     }
     
+    kprintf("entering\n");
     if (first_reach == false)
         first_reach = true;
     

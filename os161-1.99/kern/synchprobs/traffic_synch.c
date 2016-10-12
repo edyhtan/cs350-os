@@ -177,6 +177,8 @@ intersection_before_entry(Direction o, Direction d)
     if (!isRightTurn(o,d))
         carPasses++;
         
+    kprintf("entering");
+    cv_signal(cv_traffic, mutex);
     lock_release(mutex);
 }
 
@@ -210,6 +212,7 @@ intersection_after_exit(Direction origin, Direction destination)
     if (carPasses == 0)
         setInitial();
       
+    kprintf("leaving");
     cv_broadcast(cv_traffic, mutex);
     lock_release(mutex);
 }

@@ -51,6 +51,7 @@ bool isLegalRightTurn(Direction o, Direction d);
 void 
 setWarning(){
     traffic_light = warning;
+    kprintf( "Rules End\n", o, d );
 }
 
 void 
@@ -78,7 +79,7 @@ setRules(Direction o, Direction d){
         return false;
     }
     
-    kprintf("%d %d", o , d);
+    kprintf( "Rules Set %d -> %d\n", o, d );
     return true;
 }
 
@@ -191,7 +192,6 @@ intersection_before_entry(Direction o, Direction d)
         cv_wait(cv_traffic, mutex);
     }
     
-    kprintf("entering\n");
     if (first_reach == false)
         first_reach = true;
     
@@ -232,8 +232,7 @@ intersection_after_exit(Direction origin, Direction destination)
   
     if (carPasses == 0)
         setInitial();
-      
-    kprintf("leaving");
+
     cv_broadcast(cv_traffic, mutex);
     lock_release(mutex);
 }

@@ -234,7 +234,7 @@ lock_do_i_hold(struct lock *lock)
 {
     KASSERT(lock != NULL);
     spinlock_acquire(&lock->spl);
-    bool result = lock->held && lock->current_thread == curthread;
+    bool result = lock->held && (lock->current_thread == curthread);
     spinlock_release(&lock->spl);
     return result;
 }

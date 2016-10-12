@@ -141,6 +141,7 @@ intersection_sync_cleanup(void)
 {
   KASSERT(mutex != NULL);
   KASSERT(cv_traffic != NULL);
+  
   lock_destroy(mutex);
   cv_destroy(cv_traffic);
 
@@ -165,6 +166,7 @@ intersection_before_entry(Direction o, Direction d)
 {
     KASSERT(mutex != NULL);
     KASSERT(cv_traffic != NULL);
+    kprintf("entering");
     
     lock_acquire(mutex);
     while (!isRightTurn(o,d) || !setRules(o,d) || !canPass(o,d)){
@@ -177,7 +179,6 @@ intersection_before_entry(Direction o, Direction d)
     if (!isRightTurn(o,d))
         carPasses++;
         
-    kprintf("entering");
     cv_signal(cv_traffic, mutex);
     lock_release(mutex);
 }
@@ -197,14 +198,15 @@ intersection_before_entry(Direction o, Direction d)
 void
 intersection_after_exit(Direction origin, Direction destination) 
 {
+    KASSERT(mutex != NULL);
+    KASSERT(cv_traffic != NULL);
+    
     lock_acquire(mutex);
   
     if (first_reach){
       first_reach = false;
       setWarning();
     }
-
-    KASSERT(traffic_light == warning);
     
     if (!isRightTurn(origin, destination)) 
         carPasses--;

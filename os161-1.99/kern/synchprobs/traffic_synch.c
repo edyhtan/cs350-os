@@ -196,7 +196,7 @@ intersection_before_entry(Direction o, Direction d)
     
     kprintf("car enter: %d %d\n", o, d);
     
-    if (first_reach == false)
+    if (first_reach == false && !isLegalRightTurn(o,d))
         first_reach = true;
     
     if (!isRightTurn(o,d))
@@ -226,7 +226,7 @@ intersection_after_exit(Direction origin, Direction destination)
     
     lock_acquire(mutex);
   
-    if (first_reach && !warning){
+    if (first_reach && traffic_light != warning){
       first_reach = false;
       setWarning();
     }

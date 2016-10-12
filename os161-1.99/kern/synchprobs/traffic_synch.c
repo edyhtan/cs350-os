@@ -115,7 +115,8 @@ bool
 isLegalRightTurn(Direction o, Direction d){
     
     if (traffic_light == initial){
-        return false;
+        setWarning();
+        return true;
     }else if (d == north && (traffic_light == ns || traffic_light == wn)){
         return false;
     }else if (d == south && (traffic_light == ns || traffic_light == es)){

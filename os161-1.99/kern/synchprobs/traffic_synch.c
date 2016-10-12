@@ -70,7 +70,7 @@ legalRightTurn(Direction o, Direction d){
 
 bool 
 rightTurn(Direction o, Direction d){
-    return o - 1 == d || o == north && d == west；
+    return o - 1 == d || o == north && d == west;
 }
 
 bool 

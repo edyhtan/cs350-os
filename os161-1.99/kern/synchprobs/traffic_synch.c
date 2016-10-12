@@ -17,7 +17,7 @@
  * primitives, e.g., semaphores, locks, condition variables.   You are also free to 
  * declare other global variables if your solution requires them.
  */
-
+/*
 enum Passes;
 
 enum Passes{
@@ -30,104 +30,57 @@ enum Passes{
     wn = 5,
     ne = 6
 };
+*/
 
-typedef enum Passes Pass;
+static volatile int volatile *enter = {0, 0, 0, 0};
+static volatile int volatile *exit = {0, 0, 0, 0};
 
-
-static volatile Pass traffic_light = initial; 
-static volatile bool first_reach = false;
-static volatile int carPasses = 0;
+static volatile int total = 0;
+static volatile bool first_entry = false;
+static volatile bool warning = false;
 
 static struct lock *mutex;
 static struct cv *cv_traffic;
 
-void setWarning(void);
-void setInitial(void);
-bool setRules(Direction o, Direction d);
-bool canPass(Direction o, Direction d);
-bool isRightTurn(Direction o, Direction d);
-bool isLegalRightTurn(Direction o, Direction d);
 
-void 
-setWarning(){
-    traffic_light = warning;
-    kprintf( "Warning\n" );
+void changeEnter(Direction o, int i){
+    enter[o] += i;
 }
 
-void 
-setInitial(){
-    traffic_light = initial;
-    kprintf( "Rules End\n" );
+void changeExit(Direction o, int i){
+    exit[o] += i;
 }
 
 bool
-setRules(Direction o, Direction d){
-    if (traffic_light != initial || isRightTurn(o,d)){
+Parallel(Direction o, Direction d){
+    return enter[o] > 0 && exit[d] > 0;
+}
+
+bool
+Opposite(Direction o, Direction d){
+    return enter[d] > 0 && exit[o] > 0;
+}
+
+bool
+LegalRightTurn(Direction o, Direction d){
+    if (exit[d] != 0){
         return false;
-    }else if ((o == east && d == west) || (o == west && d == east)){
-        traffic_light = ew;
-    }else if ((o == north && d == south) || (o == south && d == north)){
-        traffic_light = ns;
-    }else if (o == east && d == south){
-        traffic_light = es;
-    }else if (o == south && d == west){
-        traffic_light = sw;
-    }else if (o == west && d == north){
-        traffic_light = wn;
-    }else if (o == north && d == east){
-        traffic_light = ne;
-    }else {
-        return false;
-    }
-    
-    kprintf( "Rules Set %d -> %d\n", o, d );
-    return true;
-}
-
-bool
-canPass(Direction o, Direction d){
-    if (traffic_light == warning || isRightTurn(o,d)){
-        return false;
-    }else if (traffic_light == ew){
-        return (o == east && d == west) || (o == west && d == east);
-    }else if (traffic_light == ns){
-        return (o == north && d == south) || (o == south && d == north);
-    }else if (traffic_light == es){
-        return (o == east && d == south);
-    }else if  (traffic_light == sw){
-        return (o == south && d == west);
-    }else if (traffic_light == wn){
-        return (o == west && d == north);
-    }else if (traffic_light == ne){
-        return (o == north && d == east);
-    }
-
-    panic("uh-oh");
-    return false;
-}
-
-bool
-isRightTurn(Direction o, Direction d){
-    return (o == east && d == north) || (o == north && d == west) || (o == west && d == south) || (o == south && d == east);
-}
-
-bool
-isLegalRightTurn(Direction o, Direction d){
-    
-    if (traffic_light == initial){
-        setWarning();
+    }else if (o == north && d == west){
         return true;
-    }else if (d == north && (traffic_light == ns || traffic_light == wn)){
-        return false;
-    }else if (d == south && (traffic_light == ns || traffic_light == es)){
-        return false;
-    }else if (d == east && (traffic_light == ew || traffic_light == ne)){
-        return false;
-    }else if (d == west && (traffic_light == ew || traffic_light == sw)){
-        return false;
     }
     
-    return isRightTurn(o,d);
+    return o - 1 == d;
+}
+
+bool 
+checkConstraint(Direction o, Direction d){
+    if (total == 0)
+        //first_entry = true;
+        return true;
+    else if (Parallel(o,d) || Opposite(o,d) || LegalRightTurn(o,d))
+        return true;
+    
+    return false;
 }
 
 
@@ -169,7 +122,6 @@ intersection_sync_cleanup(void)
 
 }
 
-
 /*
  * The simulation driver will call this function each time a vehicle
  * tries to enter the intersection, before it enters.
@@ -190,19 +142,14 @@ intersection_before_entry(Direction o, Direction d)
     KASSERT(cv_traffic != NULL);
     
     lock_acquire(mutex);
-    while (!isLegalRightTurn(o,d) && !setRules(o,d) && !canPass(o,d)){
+    while (!checkConstraint(o,d)){
         cv_wait(cv_traffic, mutex);
     }
     
-    kprintf("car enter: %d %d\n", o, d);
+    changeEnter(o, 1);
+    changeExit(o, 1);
+    total++;
     
-    if (first_reach == false && !isLegalRightTurn(o,d))
-        first_reach = true;
-    
-    if (!isRightTurn(o,d))
-        carPasses++;
-        
-    cv_signal(cv_traffic, mutex);
     lock_release(mutex);
 }
 
@@ -226,17 +173,10 @@ intersection_after_exit(Direction origin, Direction destination)
     
     lock_acquire(mutex);
   
-    if (first_reach && traffic_light != warning){
-      first_reach = false;
-      setWarning();
-    }
-    
-    if (!isRightTurn(origin, destination)) 
-        carPasses--;
-  
-    if (carPasses == 0)
-        setInitial();
-
+    changeEnter(origin, -1);
+    changeExit(destination, -1);
+    total--;
     cv_broadcast(cv_traffic, mutex);
+    
     lock_release(mutex);
 }

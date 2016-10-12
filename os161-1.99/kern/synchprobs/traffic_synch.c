@@ -34,7 +34,7 @@ enum Passes{
 typedef enum Passes Pass;
 
 
-static Pass traffic_light = initial; 
+static volatile Pass traffic_light = initial; 
 static volatile bool first_reach = false;
 static volatile int carPasses = 0;
 
@@ -77,6 +77,7 @@ setRules(Direction o, Direction d){
         return false;
     }
     
+    kprintf("%d %d", o , d);
     return true;
 }
 
@@ -168,9 +169,7 @@ intersection_before_entry(Direction o, Direction d)
     KASSERT(cv_traffic != NULL);
     
     lock_acquire(mutex);
-    kprintf("%d %d", o , d);
-    while (!isRightTurn(o,d) || !setRules(o,d) || !canPass(o,d)){
-        kprintf("entering\n");
+    while (!isRightTurn(o,d) && !setRules(o,d) && !canPass(o,d)){
         cv_wait(cv_traffic, mutex);
     }
     

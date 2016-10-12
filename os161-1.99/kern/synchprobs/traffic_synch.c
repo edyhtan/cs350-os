@@ -69,11 +69,17 @@ legalRightTurn(Direction o, Direction d){
 
 bool 
 checkConstraint(Direction o, Direction d){
-    if (total == 0)
+    if (warning){
+        return false;
+    }else if (total == 0){
         //first_entry = true;
         return true;
-    else if (parallel(o,d) || opposite(o,d) || legalRightTurn(o,d))
+    }else if (parallel(o,d) || opposite(o,d))
         return true;
+    else if (legalRightTurn(o,d)){
+        warning = true;
+        return true;
+    }
     
     return false;
 }
@@ -161,7 +167,7 @@ intersection_before_entry(Direction o, Direction d)
  */
 
 void
-intersection_after_exit(Direction origin, Direction destination) 
+intersection_after_exit(Direction o, Direction d) 
 {
     KASSERT(mutex != NULL);
     KASSERT(cv_traffic != NULL);
@@ -171,6 +177,11 @@ intersection_after_exit(Direction origin, Direction destination)
     changeEnter(origin, -1);
     changeExit(destination, -1);
     total--;
+    
+    if (legalRightTurn(o,d)){
+        warning = false;
+    }
+    
     cv_broadcast(cv_traffic, mutex);
     
     lock_release(mutex);

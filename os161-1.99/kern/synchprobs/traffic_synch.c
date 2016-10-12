@@ -41,6 +41,12 @@ static struct semaphore *intersectionSem;
 static struct lock *mutex;
 static struct cv *cv_traffic;
 
+void setWarning(void);
+void setInitial(void);
+bool setRules(Direction o, Direction d);
+bool canPass(Direction o, Direction d);
+bool isRightTurn(Direction o, Direction d);
+
 void 
 setWarning(){
     traffic_light = warning;

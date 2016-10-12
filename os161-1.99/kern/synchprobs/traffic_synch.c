@@ -87,7 +87,7 @@ canPass(Direction o, Direction d){
     if (traffic_light == warning){
         return false;
     }else if (traffic_light == ew){
-        return (o == east && d == west) || (o == west && d = east);
+        return (o == east && d == west) || (o == west && d == east);
     }else if (traffic_light == ns){
         return (o == north && d == south) || (o == south && d == north);
     }else if (traffic_light == es){
@@ -172,8 +172,8 @@ intersection_before_entry(Direction o, Direction d)
         cv_wait(cv_traffic, mutex);
     }
     
-    if (firstReach == false)
-        firstReach = true;
+    if (first_reach == false)
+        first_reach = true;
     
     if (!isRightTurn(o,d))
         carPasses++;

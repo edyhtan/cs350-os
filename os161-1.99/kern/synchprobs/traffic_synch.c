@@ -28,7 +28,7 @@ enum Passes
     sw = 4;
     wn = 5;
     ne = 6;
-}
+};
 
 typedef enum Passes Pass;
 

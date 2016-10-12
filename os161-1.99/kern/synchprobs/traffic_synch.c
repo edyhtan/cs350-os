@@ -174,8 +174,8 @@ intersection_after_exit(Direction o, Direction d)
     
     lock_acquire(mutex);
   
-    changeEnter(origin, -1);
-    changeExit(destination, -1);
+    changeEnter(o, -1);
+    changeExit(d, -1);
     total--;
     
     if (legalRightTurn(o,d)){

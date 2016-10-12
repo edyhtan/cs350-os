@@ -46,6 +46,7 @@ void setInitial(void);
 bool setRules(Direction o, Direction d);
 bool canPass(Direction o, Direction d);
 bool isRightTurn(Direction o, Direction d);
+bool isLegalRightTurn(Directoin o, Direction d);
 
 void 
 setWarning(){
@@ -59,7 +60,7 @@ setInitial(){
 
 bool
 setRules(Direction o, Direction d){
-    if (traffic_light != initial){
+    if (traffic_light != initial || isRightTurn(o,d)){
         return false;
     }else if ((o == east && d == west) || (o == west && d == east)){
         traffic_light = ew;
@@ -83,8 +84,7 @@ setRules(Direction o, Direction d){
 
 bool
 canPass(Direction o, Direction d){
-    KASSERT(traffic_light != initial);
-    if (traffic_light == warning){
+    if (traffic_light == warning || isRightTurn(o,d)){
         return false;
     }else if (traffic_light == ew){
         return (o == east && d == west) || (o == west && d == east);
@@ -107,6 +107,24 @@ canPass(Direction o, Direction d){
 bool
 isRightTurn(Direction o, Direction d){
     return (o == east && d == north) || (o == north && d == west) || (o == west && d == south) || (o == south && d == east);
+}
+
+bool
+isLegalRightTurn(Direction o, Direction d){
+    
+    if (traffic_light == initial){
+        return false;
+    }else if (d == north && (traffic_light == ns || traffic_light == wn)){
+        return false;
+    }else if (d == south && (traffic_light == ns || traffic_light == es)){
+        return false;
+    }else if (d == east && (traffic_light == ew || traffic_light == ne)){
+        return false;
+    }else if (d == west && (traffic_light == ew || traffic_light == sw)){
+        return false;
+    }
+    
+    return isRightTurn(o,d);
 }
 
 
@@ -169,7 +187,7 @@ intersection_before_entry(Direction o, Direction d)
     KASSERT(cv_traffic != NULL);
     
     lock_acquire(mutex);
-    while (!isRightTurn(o,d) && !setRules(o,d) && !canPass(o,d)){
+    while (!isLegalRightTurn(o,d) && !setRules(o,d) && !canPass(o,d)){
         cv_wait(cv_traffic, mutex);
     }
     

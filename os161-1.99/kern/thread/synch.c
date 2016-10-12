@@ -161,7 +161,6 @@ lock_create(const char *name)
         }
 
         lock->lk_name = kstrdup(name);
-        lock->lk = false;
         lock->held = false;
         
         if (lock->lk_name == NULL) {
@@ -208,7 +207,7 @@ lock_acquire(struct lock *lock)
        
        lock->current_thread = curthread;
        lock->held = true;
-       spinlock_release(&lock->spl);
+       spinlock_release(&(lock->spl));
        
    
 }
@@ -227,17 +226,17 @@ lock_release(struct lock *lock)
         lock->current_thread = NULL;
         
         wchan_wakeone(lock->wchan);
-        spinlock_release(&lock->spl);
+        spinlock_release(&(lock->spl));
 }
 
 bool
 lock_do_i_hold(struct lock *lock)
 {
     KASSERT(lock != NULL);
-    
-    if (!lock->held) return false;
-    
-    return lock->current_thread == curthread;
+    spinlock_acquire(&lock->spl);
+    bool result = lock->held && lock->current_thread == curthread
+    spinlock_release(&lock->spl);
+    return result;
 }
 
 ////////////////////////////////////////////////////////////
@@ -277,7 +276,6 @@ cv_destroy(struct cv *cv)
         KASSERT(cv != NULL);
 
         // add stuff here as needed
-        
         kfree(cv->cv_name);
         kfree(cv->wchan);
         kfree(cv);

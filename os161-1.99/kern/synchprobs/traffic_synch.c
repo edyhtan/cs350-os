@@ -51,12 +51,13 @@ bool isLegalRightTurn(Direction o, Direction d);
 void 
 setWarning(){
     traffic_light = warning;
-    kprintf( "Rules End\n" );
+    kprintf( "Warning\n" );
 }
 
 void 
 setInitial(){
     traffic_light = initial;
+    kprintf( "Rules End\n" );
 }
 
 bool

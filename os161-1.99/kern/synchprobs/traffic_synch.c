@@ -31,7 +31,7 @@ static struct cv *cv_traffic;
 
 void changeEnter(Direction o, int i);
 void changeExit(Direction o, int i);
-bool parallel(Direction o, Directin d);
+bool parallel(Direction o, Direction d);
 bool opposite(Direction o, Direction d);
 bool legalRightTurn(Direction o, Direction d);
 bool checkConstraint(Direction o, Direction d);

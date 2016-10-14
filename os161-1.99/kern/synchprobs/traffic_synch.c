@@ -20,7 +20,8 @@
  */
 
 static volatile int volatile enterBlock[4] = {0, 0, 0, 0};
-static volatile int volatile exitBlock[4] = {0, 0, 0, 0};
+static volatile int volatile regularBlock[4] = {0, 0, 0, 0};
+static volatile int volatile rightTurnBlock[4] = {0, 0, 0, 0};
 
 static volatile int total = 0;
 static volatile bool first_entry = false;
@@ -41,7 +42,12 @@ setEnter(Direction o, int i){
 
 void 
 setExit(Direction o, int i){
-    exitBlock[o] += i;
+    regularBlock[o] += i;
+}
+
+void
+setRightTurnBlock(Direction o, int i){
+    rightTurnBlock[4] += i;
 }
 
 /*
@@ -62,18 +68,21 @@ setBlock(Direction o, Direction d, int i){
             if (j != o)
                 setEnter(j, i); // block all except the current one
         }
+    }else if ((o == north && d == west) || ( o - 1 == d)){
+        setExit(d,i);
+        return;
     }
     
-    setExit(d, i);
+    setRightTurnBlock(d, i);
 }
 
 bool 
 checkConstraint(Direction o, Direction d){
-    if ((o == north && d == west) || (o - 1 == d)){
-        return (!exitBlock[d]);
+    if ((o == north && d == west) || ( o - 1 == d)){
+        return (!rightTurnBlock[d]);
     }
     
-    return (!enterBlock[o]);
+    return (!enterBlock[o] || !regularBlock[d]);
 }
 
 

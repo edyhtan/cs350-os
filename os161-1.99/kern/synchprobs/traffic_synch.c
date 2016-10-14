@@ -24,7 +24,7 @@ static volatile int volatile regularBlock[4] = {0, 0, 0, 0};
 static volatile int volatile rightTurnBlock[4] = {0, 0, 0, 0};
 
 static volatile int total = 0;
-static volatile bool first_entry = false;
+static volatile bool first = false;
 static volatile bool warning = false;
 
 static struct lock *mutex;
@@ -156,6 +156,14 @@ intersection_before_entry(Direction o, Direction d)
         cv_wait(cv_traffic, mutex);
     }
     
+    if (!first){
+        first = true;
+    }
+    
+    if ((o == north && d == west) || ( o - 1 == d)){
+        total++;
+    }
+    
     setBlock(o,d,1);
     
     lock_release(mutex);
@@ -181,8 +189,21 @@ intersection_after_exit(Direction o, Direction d)
     
     lock_acquire(mutex);
     
+    if (first){
+        first = false;
+        warning = true;
+    }
+    
     setBlock(o,d,-1);
     cv_broadcast(cv_traffic, mutex);
+    
+    if ((o == north && d == west) || ( o - 1 == d))
+        total--;
+    
+    
+    if (total == 0){
+        warning = false;
+    }
     
     lock_release(mutex);
 }

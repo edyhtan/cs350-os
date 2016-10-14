@@ -86,10 +86,10 @@ setBlock(Direction o, Direction d, int i){
 bool 
 checkConstraint(Direction o, Direction d){
     if ((o == north && d == west) || ( o - 1 == d)){
-        return rightTurnBlock[d];
+        return rightTurnBlock[d] > 0 ;
     }
     
-    return enterBlock[o] || regularBlock[d];
+    return enterBlock[o] > 0 || regularBlock[d] > 0;
 }
 
 
@@ -182,7 +182,6 @@ intersection_after_exit(Direction o, Direction d)
     lock_acquire(mutex);
     
     setBlock(o,d,-1);
-    
     cv_broadcast(cv_traffic, mutex);
     
     lock_release(mutex);

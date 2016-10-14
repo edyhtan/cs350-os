@@ -57,7 +57,7 @@ setBlock(Direction o, Direction d, int i){
     }else if ((o == north && d == south) || (o == south && d == north)){
         setEnter(1, i); // block/unblock from east entering
         setEnter(3, i); // block/unblock from west entering
-    }else if ((o == west && d == north) || ( o + 1 == d){
+    }else if ((o == west && d == north) || ( o + 1 == d)){
         for (int j = 0; j < 4; j++){
             if (j != o)
                 setEnter(j, i); // block all except the current one

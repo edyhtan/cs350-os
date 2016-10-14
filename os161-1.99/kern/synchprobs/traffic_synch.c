@@ -26,7 +26,6 @@ static volatile int volatile exit[4] = {0, 0, 0, 0};
 static volatile int total = 0;
 static volatile bool first_entry = false;
 static volatile bool warning = false;
-struct thread *danger = NULL;
 
 static struct lock *mutex;
 static struct cv *cv_traffic;
@@ -61,9 +60,11 @@ opposite(Direction o, Direction d){
 
 bool
 legalRightTurn(Direction o, Direction d){
-    if (exit[d] != 0){
+    if (exit[d] > 0){
         return false;
-    }else if (o == north && d == west){
+    }
+    
+    if (o == north && d == west){
         return true;
     }
     
@@ -87,8 +88,6 @@ checkConstraint(Direction o, Direction d){
         changeEnter(d,1);
         return true;
     } else if (legalRightTurn(o,d)){
-        warning = true;
-        danger = curthread;
         return true;
     }
     
@@ -188,8 +187,6 @@ intersection_after_exit(Direction o, Direction d)
         changeExit(d, -1);
     }
     total--;
-    
-
     
     cv_broadcast(cv_traffic, mutex);
     

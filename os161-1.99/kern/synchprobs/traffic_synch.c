@@ -87,10 +87,10 @@ setBlock(Direction o, Direction d, int i){
     kprintf("south enter: %d\n", enterBlock[south]);
     kprintf("east enter: %d\n", enterBlock[east]);
     kprintf("west enter: %d\n", enterBlock[west]);
-    kprintf("north exit: %d\n", exitBlock[north]);
-    kprintf("south exit: %d\n", exitBlock[south]);
-    kprintf("east exit: %d\n", exitBlock[east]);
-    kprintf("west exit: %d\n", exitBlock[west]);
+    kprintf("north exit: %d\n", regularBlock[north]);
+    kprintf("south exit: %d\n", regularBlock[south]);
+    kprintf("east exit: %d\n", regularBlock[east]);
+    kprintf("west exit: %d\n", regularBlock[west]);
 }
 
 bool 

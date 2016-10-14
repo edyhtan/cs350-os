@@ -31,23 +31,6 @@ void setRightTurnBlock(Direction o, int i);
 void setBlock(Direction o, Direction d, int i);
 bool checkConstraint(Direction o, Direction d);
 
-struct waitV {
-    Direction o;
-    Direction d;
-};
-
-struct waitV *waitCreate(Direction o, Direction d){
-    struct waitV *v;
-    v = kmalloc(sizeof(*v));
-    v->o = o;
-    v->d = d;
-    return v;
-}
-
-void waitDestroy(struct waitV * v){
-    kfree(v);
-}
-
 void 
 setEnter(Direction o, int i){
     enterBlock[o] += i;

@@ -30,8 +30,8 @@ static struct lock *mutex;
 static struct cv *cv_traffic;
 
 void setEnter(Direction o, int i);
-void setEgxit(Direction o, int i);
-void setBlock(Direction o, Direction d);
+void setExit(Direction o, int i);
+void setBlock(Direction o, Direction d, int i);
 bool checkConstraint(Direction o, Direction d);
 
 void 

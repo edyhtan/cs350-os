@@ -91,7 +91,7 @@ checkConstraint(Direction o, Direction d){
     if (warning){
         return false;
     }else if (total == 0){
-        if (!RightTurn(o,d)){
+        if (!rightTurn(o,d)){
             changeEnter(o,1);
             changeExit(o,1);
         }

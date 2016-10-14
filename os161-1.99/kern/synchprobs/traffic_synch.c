@@ -29,8 +29,8 @@ static volatile bool warning = false;
 static struct lock *mutex;
 static struct cv *cv_traffic;
 
-void changeEnter(Direction o, int i);
-void changeExit(Direction o, int i);
+void setEnter(Direction o, int i);
+void setExit(Direction o, int i);
 void setBlock(Direction o, Direction d);
 bool checkConstraint(Direction o, Direction d);
 
@@ -40,7 +40,7 @@ setEnter(Direction o, int i){
 }
 
 void 
-changeExit(Direction o, int i){
+setExit(Direction o, int i){
     exitBlock[o] += i;
 }
 

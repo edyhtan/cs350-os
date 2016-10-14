@@ -20,13 +20,13 @@
  */
 
 enum passType {
-    none = 0;
-    nw = 1;
-    ew = 2;
-    ne = 3;
-    es = 4;
-    sw = 5;
-    wn = 6;
+    none = 0,
+    nw = 1,
+    ew = 2,
+    ne = 3,
+    es = 4,
+    sw = 5,
+    wn = 6,
 }
 
 

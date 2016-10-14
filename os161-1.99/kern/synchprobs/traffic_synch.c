@@ -61,14 +61,14 @@ setBlock(Direction o, Direction d, int i){
     if ((o == east && d == west) || (o == west && d == east)){
         setEnter(0, i); // block/unblock from north entering (Non right turn)
         setEnter(2, i); // block/unblock from south entering (Non right turn)
-        setExit(1, i);
-        setExit(3, i);
+        setExit(0, i);
+        setExit(2, i);
         setRightTurnBlock(d, i);
     }else if ((o == north && d == south) || (o == south && d == north)){
         setEnter(1, i); // block/unblock from east entering
         setEnter(3, i); // block/unblock from west entering
-        setExit(0, i);
-        setExit(2, i);
+        setExit(1, i);
+        setExit(3, i);
         setRightTurnBlock(d, i);
     }else if ((o == west && d == north) || ( o + 1 == d)){
         for (unsigned int j = 0; j < 4; j++){

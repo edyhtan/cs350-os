@@ -153,7 +153,7 @@ intersection_before_entry(Direction o, Direction d)
     
     lock_acquire(mutex);
     
-    while (checkConstraint(o,d)){
+    while (checkConstraint(o,d) || warning){
         cv_wait(cv_traffic, mutex);
     }
     

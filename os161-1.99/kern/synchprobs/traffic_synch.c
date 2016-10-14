@@ -18,7 +18,17 @@
  * primitives, e.g., semaphores, locks, condition variables.   You are also free to 
  * declare other global variables if your solution requires them.
  */
- 
+
+enum passType {
+    none = 0;
+    nw = 1;
+    ew = 2;
+    ne = 3;
+    es = 4;
+    sw = 5;
+    wn = 6;
+}
+
 
 static volatile int volatile enter[4] = {0, 0, 0, 0};
 static volatile int volatile exit[4] = {0, 0, 0, 0};
@@ -81,11 +91,15 @@ checkConstraint(Direction o, Direction d){
     if (warning){
         return false;
     }else if (total == 0){
-        //first_entry = true;
+        if (!RightTurn(o,d)){
+            changeEnter(o,1);
+            changeExit(o,1);
+            change
+        }
         return true;
     }else if (parallel(o,d) || opposite(o,d)){
         changeEnter(o,1);
-        changeEnter(d,1);
+        changeExit(d,1);
         return true;
     } else if (legalRightTurn(o,d)){
         return true;

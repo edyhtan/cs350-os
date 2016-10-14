@@ -91,14 +91,8 @@ checkConstraint(Direction o, Direction d){
     if (warning){
         return false;
     }else if (total == 0){
-        if (!rightTurn(o,d)){
-            changeEnter(o,1);
-            changeExit(o,1);
-        }
         return true;
     }else if (parallel(o,d) || opposite(o,d)){
-        changeEnter(o,1);
-        changeExit(d,1);
         return true;
     } else if (legalRightTurn(o,d)){
         return true;
@@ -168,6 +162,11 @@ intersection_before_entry(Direction o, Direction d)
     lock_acquire(mutex);
     while (!checkConstraint(o,d)){
         cv_wait(cv_traffic, mutex);
+    }
+    
+    if (!rightTurn(o,d)){
+            changeEnter(o,1);
+            changeExit(o,1);
     }
     
     total++;

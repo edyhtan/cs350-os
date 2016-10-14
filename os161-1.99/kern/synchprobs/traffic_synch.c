@@ -82,6 +82,7 @@ setBlock(Direction o, Direction d, int i){
         setExit(d,i);
     }
     
+    /*
     kprintf("///////////////////////\n");
     kprintf("north enter: %d\n", enterBlock[north]);
     kprintf("south enter: %d\n", enterBlock[south]);
@@ -95,6 +96,7 @@ setBlock(Direction o, Direction d, int i){
     kprintf("south right exit: %d\n", rightTurnBlock[south]);
     kprintf("east right exit: %d\n", rightTurnBlock[east]);
     kprintf("west right exit: %d\n", rightTurnBlock[west]);
+     */
 }
 
 bool 

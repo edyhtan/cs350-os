@@ -47,7 +47,7 @@ setExit(Direction o, int i){
 
 void
 setRightTurnBlock(Direction o, int i){
-    rightTurnBlock[4] += i;
+    rightTurnBlock[o] += i;
 }
 
 /*

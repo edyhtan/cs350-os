@@ -3,7 +3,6 @@
 #include <synchprobs.h>
 #include <synch.h>
 #include <opt-A1.h>
-#include <current.h>
 
 /* 
  * This simple default synchronization mechanism allows only vehicle at a time
@@ -23,10 +22,6 @@ static volatile int volatile enterBlock[4] = {0, 0, 0, 0};
 static volatile int volatile regularBlock[4] = {0, 0, 0, 0};
 static volatile int volatile rightTurnBlock[4] = {0, 0, 0, 0};
 
-static volatile int total = 0;
-static volatile bool first = false;
-static volatile bool warning = false;
-
 static struct lock *mutex;
 static struct cv *cv_traffic;
 
@@ -35,6 +30,23 @@ void setExit(Direction o, int i);
 void setRightTurnBlock(Direction o, int i);
 void setBlock(Direction o, Direction d, int i);
 bool checkConstraint(Direction o, Direction d);
+
+struct waitV {
+    Direction o;
+    Direction d;
+};
+
+struct waitV *waitCreate(Direction o, Direction d){
+    struct waitV *v;
+    v = kmalloc(sizeof(*v));
+    v->o = o;
+    v->d = d;
+    return v;
+}
+
+void waitDestroy(struct waitV * v){
+    kfree(v);
+}
 
 void 
 setEnter(Direction o, int i){
@@ -83,17 +95,13 @@ setBlock(Direction o, Direction d, int i){
     }
 }
 
+
+// need refactor
 bool 
 checkConstraint(Direction o, Direction d){
-
     if ((o == north && d == west) || ( o - 1 == d)){
-        return rightTurnBlock[d] > 0 ;
+        return rightTurnBlock[d];
     }
-    
-    if (warning){
-        return true;
-    }
-    
     return (enterBlock[o] > 0 || regularBlock[d] > 0);
 }
 
@@ -111,7 +119,7 @@ intersection_sync_init(void)
     mutex = lock_create("traffic lock");
     cv_traffic = cv_create("traffic cv");
     
-    if (mutex == NULL || cv_traffic == NULL){
+    if ( mutex == NULL || cv_traffic == NULL ){
         panic("uh-oh.....");
     }
     
@@ -133,6 +141,7 @@ intersection_sync_cleanup(void)
   
   lock_destroy(mutex);
   cv_destroy(cv_traffic);
+  q_destory(waitQueue);
 
 }
 
@@ -161,14 +170,6 @@ intersection_before_entry(Direction o, Direction d)
         cv_wait(cv_traffic, mutex);
     }
     
-    if (!first){
-        first = true;
-    }
-    
-    if ((o == north && d == west) || ( o - 1 == d)){
-        total++;
-    }
-    
     setBlock(o,d,1);
     
     lock_release(mutex);
@@ -194,21 +195,8 @@ intersection_after_exit(Direction o, Direction d)
     
     lock_acquire(mutex);
     
-    if (first){
-        first = false;
-        warning = true;
-    }
-    
     setBlock(o,d,-1);
     cv_broadcast(cv_traffic, mutex);
-    
-    if ((o == north && d == west) || ( o - 1 == d))
-        total--;
-    
-    
-    if (total == 0){
-        warning = false;
-    }
-    
+
     lock_release(mutex);
 }

@@ -74,7 +74,6 @@ setBlock(Direction o, Direction d, int i){
                 setEnter(j, i); // block all except the current one
             if (j != d)
                 setExit(j, i);
-}
         }
     }else if ((o == north && d == west) || ( o - 1 == d)){
         setExit(d,i);

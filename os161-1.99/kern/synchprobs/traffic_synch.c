@@ -30,7 +30,7 @@ static struct lock *mutex;
 static struct cv *cv_traffic;
 
 void setEnter(Direction o, int i);
-void setExit(Direction o, int i);
+void setEgxit(Direction o, int i);
 void setBlock(Direction o, Direction d);
 bool checkConstraint(Direction o, Direction d);
 
@@ -58,7 +58,7 @@ setBlock(Direction o, Direction d, int i){
         setEnter(1, i); // block/unblock from east entering
         setEnter(3, i); // block/unblock from west entering
     }else if ((o == west && d == north) || ( o + 1 == d)){
-        for (int j = 0; j < 4; j++){
+        for (unsigned int j = 0; j < 4; j++){
             if (j != o)
                 setEnter(j, i); // block all except the current one
         }

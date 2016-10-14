@@ -83,6 +83,8 @@ checkConstraint(Direction o, Direction d){
         //first_entry = true;
         return true;
     }else if (parallel(o,d) || opposite(o,d))
+        changeEnter(o,1);
+        changeEnter(d,1);
         return true;
     else if (legalRightTurn(o,d)){
         warning = true;
@@ -156,8 +158,6 @@ intersection_before_entry(Direction o, Direction d)
         cv_wait(cv_traffic, mutex);
     }
     
-    changeEnter(o, 1);
-    changeExit(o, 1);
     total++;
     
     lock_release(mutex);
@@ -183,14 +183,13 @@ intersection_after_exit(Direction o, Direction d)
     
     lock_acquire(mutex);
   
-    changeEnter(o, -1);
-    changeExit(d, -1);
+    if (!rightTurn(o,d)){
+        changeEnter(o, -1);
+        changeExit(d, -1);
+    }
     total--;
     
-    if (danger == curthread){
-        warning = false;
-        danger = NULL;
-    }
+
     
     cv_broadcast(cv_traffic, mutex);
     

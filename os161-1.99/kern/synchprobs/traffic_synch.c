@@ -82,11 +82,11 @@ checkConstraint(Direction o, Direction d){
     }else if (total == 0){
         //first_entry = true;
         return true;
-    }else if (parallel(o,d) || opposite(o,d))
+    }else if (parallel(o,d) || opposite(o,d)){
         changeEnter(o,1);
         changeEnter(d,1);
         return true;
-    else if (legalRightTurn(o,d)){
+    } else if (legalRightTurn(o,d)){
         warning = true;
         danger = curthread;
         return true;

@@ -19,19 +19,8 @@
  * declare other global variables if your solution requires them.
  */
 
-enum passType {
-    none = 0,
-    nw = 1,
-    ew = 2,
-    ne = 3,
-    es = 4,
-    sw = 5,
-    wn = 6,
-};
-
-
-static volatile int volatile enter[4] = {0, 0, 0, 0};
-static volatile int volatile exit[4] = {0, 0, 0, 0};
+static volatile int volatile enterBlock[4] = {0, 0, 0, 0};
+static volatile int volatile exitBlock[4] = {0, 0, 0, 0};
 
 static volatile int total = 0;
 static volatile bool first_entry = false;
@@ -42,63 +31,49 @@ static struct cv *cv_traffic;
 
 void changeEnter(Direction o, int i);
 void changeExit(Direction o, int i);
-bool parallel(Direction o, Direction d);
-bool opposite(Direction o, Direction d);
-bool rightTurn(Direction o, Direction d);
-bool legalRightTurn(Direction o, Direction d);
+void setBlock(Direction o, Direction d);
 bool checkConstraint(Direction o, Direction d);
 
 void 
-changeEnter(Direction o, int i){
-    enter[o] += i;
+setEnter(Direction o, int i){
+    enterBlock[o] += i;
 }
 
 void 
 changeExit(Direction o, int i){
-    exit[o] += i;
+    exitBlock[o] += i;
 }
 
-bool
-parallel(Direction o, Direction d){
-    return enter[o] > 0 && exit[d] > 0;
-}
-
-bool
-opposite(Direction o, Direction d){
-    return enter[d] > 0 && exit[o] > 0;
-}
-
-bool
-legalRightTurn(Direction o, Direction d){
-    if (exit[d] > 0){
-        return false;
+/*
+ * i = 1 indicates entering
+ * i = -1 indicates leaving
+ */
+void
+setBlock(Direction o, Direction d, int i){
+    // straight pass
+    if ((o == east && d == west) || (o == west && d == east)){
+        setEnter(0, i); // block/unblock from north entering (Non right turn)
+        setEnter(2, i); // block/unblock from south entering (Non right turn)
+    }else if ((o == north && d == south) || (o == south && d == north)){
+        setEnter(1, i); // block/unblock from east entering
+        setEnter(3, i); // block/unblock from west entering
+    }else if ((o == west && d == north) || ( o + 1 == d){
+        for (int j = 0; j < 4; j++){
+            if (j != o)
+                setEnter(j, i); // block all except the current one
+        }
     }
     
-    if (o == north && d == west){
-        return true;
-    }
-    
-    return o - 1 == d;
-}
-
-bool 
-rightTurn(Direction o, Direction d){
-    return o - 1 == d || (o == north && d == west);
+    setExit(d, i);
 }
 
 bool 
 checkConstraint(Direction o, Direction d){
-    if (warning){
-        return false;
-    }else if (total == 0){
-        return true;
-    }else if (parallel(o,d) || opposite(o,d)){
-        return true;
-    } else if (legalRightTurn(o,d)){
-        return true;
+    if ((o == north && d == west) || (o - 1 == d)){
+        return (!exitBlock[d]);
     }
     
-    return false;
+    return (!enterBlock[o]);
 }
 
 
@@ -160,16 +135,12 @@ intersection_before_entry(Direction o, Direction d)
     KASSERT(cv_traffic != NULL);
     
     lock_acquire(mutex);
+    
     while (!checkConstraint(o,d)){
         cv_wait(cv_traffic, mutex);
     }
     
-    if (!rightTurn(o,d)){
-            changeEnter(o,1);
-            changeExit(o,1);
-    }
-    
-    total++;
+    setBlock(o,d,1);
     
     lock_release(mutex);
 }
@@ -193,12 +164,8 @@ intersection_after_exit(Direction o, Direction d)
     KASSERT(cv_traffic != NULL);
     
     lock_acquire(mutex);
-  
-    if (!rightTurn(o,d)){
-        changeEnter(o, -1);
-        changeExit(d, -1);
-    }
-    total--;
+    
+    setBlock(o,d,-1);
     
     cv_broadcast(cv_traffic, mutex);
     

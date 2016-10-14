@@ -85,6 +85,11 @@ setBlock(Direction o, Direction d, int i){
 
 bool 
 checkConstraint(Direction o, Direction d){
+    
+    if (warning){
+        return false;
+    }
+    
     if ((o == north && d == west) || ( o - 1 == d)){
         return rightTurnBlock[d] > 0 ;
     }

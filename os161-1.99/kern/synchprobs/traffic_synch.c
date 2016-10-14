@@ -27,11 +27,11 @@ enum passType {
     es = 4,
     sw = 5,
     wn = 6,
-}
+};
 
 
-volatile int volatile enter[4] = {0, 0, 0, 0};
-volatile int volatile exit[4] = {0, 0, 0, 0};
+static volatile int volatile enter[4] = {0, 0, 0, 0};
+static volatile int volatile exit[4] = {0, 0, 0, 0};
 
 static volatile int total = 0;
 static volatile bool first_entry = false;

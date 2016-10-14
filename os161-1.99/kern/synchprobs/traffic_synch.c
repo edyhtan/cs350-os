@@ -94,7 +94,6 @@ checkConstraint(Direction o, Direction d){
         if (!RightTurn(o,d)){
             changeEnter(o,1);
             changeExit(o,1);
-            change
         }
         return true;
     }else if (parallel(o,d) || opposite(o,d)){

@@ -63,11 +63,13 @@ setBlock(Direction o, Direction d, int i){
         setEnter(2, i); // block/unblock from south entering (Non right turn)
         setExit(1, i);
         setExit(3, i);
+        setRightTurnBlock(d, i);
     }else if ((o == north && d == south) || (o == south && d == north)){
         setEnter(1, i); // block/unblock from east entering
         setEnter(3, i); // block/unblock from west entering
         setExit(0, i);
         setExit(2, i);
+        setRightTurnBlock(d, i);
     }else if ((o == west && d == north) || ( o + 1 == d)){
         for (unsigned int j = 0; j < 4; j++){
             if (j != o)
@@ -75,21 +77,19 @@ setBlock(Direction o, Direction d, int i){
             if (j != d)
                 setExit(j, i);
         }
+        setRightTurnBlock(d, i);
     }else if ((o == north && d == west) || ( o - 1 == d)){
         setExit(d,i);
-        return;
     }
-    
-    setRightTurnBlock(d, i);
 }
 
 bool 
 checkConstraint(Direction o, Direction d){
     if ((o == north && d == west) || ( o - 1 == d)){
-        return (!rightTurnBlock[d]);
+        return rightTurnBlock[d];
     }
     
-    return (!enterBlock[o] || !regularBlock[d]);
+    return enterBlock[o] || regularBlock[d];
 }
 
 
@@ -152,7 +152,7 @@ intersection_before_entry(Direction o, Direction d)
     
     lock_acquire(mutex);
     
-    while (!checkConstraint(o,d)){
+    while (checkConstraint(o,d)){
         cv_wait(cv_traffic, mutex);
     }
     

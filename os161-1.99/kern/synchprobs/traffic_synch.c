@@ -81,12 +81,6 @@ setBlock(Direction o, Direction d, int i){
     }else if ((o == north && d == west) || ( o - 1 == d)){
         setExit(d,i);
     }
-    
-    kprintf("///////////////////////\n");
-    kprintf("%d %d %d %d\n", enterBlock[0], enterBlock[1],enterBlock[2],enterBlock[3]);
-    kprintf("%d %d %d %d\n", regularBlock[0], regularBlock[1],regularBlock[2],regularBlock[3]);
-    kprintf("%d %d %d %d\n", rightTurnBlock[0], rightTurnBlock[1],rightTurnBlock[2],rightTurnBlock[3]);
-    
 }
 
 bool 

@@ -141,7 +141,6 @@ intersection_sync_cleanup(void)
   
   lock_destroy(mutex);
   cv_destroy(cv_traffic);
-  q_destory(waitQueue);
 
 }
 

@@ -90,7 +90,7 @@ checkConstraint(Direction o, Direction d){
         return rightTurnBlock[d] > 0 ;
     }
     
-    return enterBlock[o] > 0 || regularBlock[d] > 0;
+    return (enterBlock[o] > 0 || regularBlock[d] > 0) && warning;
 }
 
 
@@ -153,7 +153,7 @@ intersection_before_entry(Direction o, Direction d)
     
     lock_acquire(mutex);
     
-    while (checkConstraint(o,d) || warning){
+    while (checkConstraint(o,d)){
         cv_wait(cv_traffic, mutex);
     }
     

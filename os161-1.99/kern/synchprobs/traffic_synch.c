@@ -90,7 +90,11 @@ checkConstraint(Direction o, Direction d){
         return rightTurnBlock[d] > 0 ;
     }
     
-    return (enterBlock[o] > 0 || regularBlock[d] > 0) && warning;
+    if (warning){
+        return true;
+    }
+    
+    return (enterBlock[o] > 0 || regularBlock[d] > 0);
 }
 
 

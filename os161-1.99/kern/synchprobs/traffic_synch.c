@@ -32,6 +32,7 @@ static struct cv *cv_traffic;
 
 void setEnter(Direction o, int i);
 void setExit(Direction o, int i);
+void setRightTurnBlock(Direction o, int i);
 void setBlock(Direction o, Direction d, int i);
 bool checkConstraint(Direction o, Direction d);
 

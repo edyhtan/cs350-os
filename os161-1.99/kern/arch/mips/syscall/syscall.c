@@ -187,7 +187,9 @@ enter_forked_process(void *tf, unsigned long nargs)
     
     KASSERT(tf != NULL);
     
-    struct trapframe stackf = *tf;
+    
+    
+    struct trapframe stackf = *(trapframe *)tf;
     kfree(tf);
     
     curproc_setas(as);

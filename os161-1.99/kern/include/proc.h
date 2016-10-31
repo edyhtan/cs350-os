@@ -134,12 +134,10 @@ struct addrspace *curproc_getas(void);
 /* Change the address space of the current process, and return the old one. */
 struct addrspace *curproc_setas(struct addrspace *);
 
-#if OPT_A2
 struct process_info *create_pinfo();
 void destroy_pinfo(struct process_info *info);
 void add_child_proc(struct proc *parent, struct proc *child);
 void add_pid(struct process_info *parent, pid_t pid);
 pid_t find_free_pid();
-#endif
 
 #endif /* _PROC_H_ */

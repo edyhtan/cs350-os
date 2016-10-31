@@ -76,10 +76,6 @@ struct semaphore *no_proc_sem;
 bool pid_table[PID_MAX + 1];
 struct lock *pid_table_lock;
 struct cv *pid_table_cv;
-#endif
-
-
-#if OPT_A2
 
 /*
  * Find a free spot to use your pid, will implement reuse later.
@@ -465,7 +461,7 @@ create_pinfo()
 }
 
 void
-add_pid(struct process_info *p, pid_t pid)
+add_pid( struct process_info *p, pid_t pid )
 {
     p->pid = pid;
 }

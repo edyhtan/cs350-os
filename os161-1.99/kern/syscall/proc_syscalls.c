@@ -268,6 +268,8 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     
     int result = thread_fork(child_name, child_proc, &enter_forked_process, void_package, 0);
     
+    kprintf("reached/n");
+    
     if (result) {
         kfree(child_name);
         kfree(child_tf);
@@ -275,8 +277,6 @@ sys_fork(struct trapframe *tf, pid_t *retval){
         proc_destroy(child_proc);
         return ENOMEM; // out of memory
     }
-    
-    kprintf("reached/n");
     *retval = 1;
     return (0);
 }

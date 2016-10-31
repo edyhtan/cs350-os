@@ -49,7 +49,7 @@ struct semaphore;
  * Process structure.
  */
  
- #if OPT_A2
+#if OPT_A2
  /*
   * used to keep track of children-parent relationship and other
   * important process information.
@@ -63,6 +63,7 @@ struct process_info{
     struct process_info *next_sibling;
     struct process_info *child_link;
 }
+#endif // OPT_A2
 
 struct proc {
 	char *p_name;			/* Name of this process */
@@ -74,6 +75,7 @@ struct proc {
 
 	/* VFS */
 	struct vnode *p_cwd;		/* current working directory */
+
 
 #ifdef UW
   /* a vnode to refer to the console device */

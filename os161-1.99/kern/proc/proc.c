@@ -234,7 +234,7 @@ proc_bootstrap(void)
   
 #if OPT_A2
   pid_table_lock = lock_create("PID Table Lock");
-  pid_table_cv = cv_createa("PID CV");
+  pid_table_cv = cv_create("PID CV");
   for (int i = 1; i <= PID_MAX ; i++){
       pid_table[i] = false;
   }
@@ -281,7 +281,7 @@ proc_create_runprogram(const char *name)
     
     lock_release(pid_table_lock);
     
-    add_pid(proc, pid);
+    add_pid(proc->info, pid);
     
     // DEBUG
         

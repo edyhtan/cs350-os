@@ -198,6 +198,8 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     
     KASSERT(curproc != NULL);
     
+    kprintf("forking child from %d", curproc->info->pid);
+    
     //Step1: Create new name for the children proc
     char *child_name = kmalloc(sizeof(char) * NAME_MAX);
     strcpy(child_name, curproc->p_name);

@@ -467,7 +467,7 @@ add_pid( struct process_info *p, pid_t pid )
 }
 
 void
-destory_pinfo( struct process_info *info )
+destroy_pinfo( struct process_info *info )
 {
     kfree(info);
 }

@@ -227,19 +227,18 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     as_copy(curproc->p_addrspace, &child_addsp);
     
     if (child_addsp == NULL){
+        kprintf("O");
         kfree(child_name);
         kfree(child_proc);
         kfree(child_tf);
         *retval = -1;
         return ENOMEM;
     }
-    kprintf("K\n");
 
     //Step3: Attach newly copied     address space to child
     child_proc->p_addrspace = child_addsp;// attach to children proc
     memcpy(child_tf, tf, sizeof(struct trapframe));// deep copy trapframe
     
-    kprintf("J\n");
     //Step4: Assign PID and create parent/child relationship
     
     // find a free pid slot

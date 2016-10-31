@@ -148,8 +148,6 @@ sys_waitpid(pid_t pid,
     
     while (pinfo != NULL){
         if (pinfo->pid == pid){
-            kprintf("%d\n", (int)pid);
-            kprintf("%d\n", (int)pinfo->pid);
             break;
         }
         pinfo = pinfo->next_sibling;

@@ -443,8 +443,8 @@ add_child_proc(struct proc *parent, struct proc *child)
     (child->info)->parent = parent->info;
     
     // add child to parent's child link, link siblings for the child
-    (child->info)->next_sibling = (parent->info)->child_link;
-    (parent->info)->child_link = (child->info)->next_sibling;
+    (child->info)->next_sibiling = (parent->info)->child_link;
+    (parent->info)->child_link = child->info;
 }
 
 struct process_info *

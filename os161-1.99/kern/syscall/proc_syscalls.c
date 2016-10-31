@@ -2,6 +2,7 @@
 #include <kern/errno.h>
 #include <kern/unistd.h>
 #include <kern/wait.h>
+#include <mips/trapframe.h>
 #include <lib.h>
 #include <syscall.h>
 #include <current.h>
@@ -9,6 +10,7 @@
 #include <thread.h>
 #include <addrspace.h>
 #include <copyinout.h>
+#include <synch.h>
 #include "opt-A2.h"
 
   /* this implementation of sys__exit does not do anything with the exit code */
@@ -63,21 +65,21 @@ void sys__exit(int exitcode) {
         
       }else {
         children->parent = NULL;
-        prev = chidlren;
+        prev = children;
         children = children->next_sibling;
       }
   }
   
   if (pinfo->parent == NULL){
       // since there's no parent, the exit status is not insteresting
-      pid_table[pid] = false;
+      pid_table[pinfo->pid] = false;
       destroy_pinfo(pinfo);
   }else{
       // change status
       pinfo->exit_status = true;
       pinfo->exit_code = exitcode;
   
-      cv_broacast(pid_table_cv, pid_table_lock);
+      cv_broadcast(pid_table_cv, pid_table_lock);
   }
   
   lock_release(pid_table_lock);
@@ -104,7 +106,7 @@ sys_getpid(pid_t *retval)
     
 #if OPT_A2
     KASSERT(curproc != NULL);
-    *retval = curproc->p_pid;
+    *retval = (curproc->info)->pid;
 #else
     /* for now, this is just a stub that always returns a PID of 1 */
     /* you need to fix this to make it work properly */
@@ -194,11 +196,11 @@ sys_waitpid(pid_t pid,
 int 
 sys_fork(struct trapframe *tf, pid_t *retval){
     
-    KASSERT(curporc != NULL);
+    KASSERT(curproc != NULL);
     
     //Step1: Create new name for the children proc
     char *child_name = kmalloc(sizeof(char) * NAME_MAX);
-    strcpy(child_name, curproc->pname);
+    strcpy(child_name, curproc->p_name);
     strcat(child_name, "_children");
     
     //Step 1:Create process structure for child process
@@ -233,7 +235,7 @@ sys_fork(struct trapframe *tf, pid_t *retval){
 
     //Step3: Attach newly copied     address space to child
     child_proc->p_addrspace = child_addsp;// attach to children proc
-    memcpy(child_tf, tf, sizeof(struct trapframe))；// deep copy trapframe
+    memcpy(child_tf, tf, sizeof(struct trapframe));// deep copy trapframe
     
     
     //Step4: Assign PID and create parent/child relationship
@@ -255,8 +257,8 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     
     //create process_info and parent-child relationship
     child_proc->info = create_pinfo();
-    add_child(curproc, child_proc);
-    add_pid(curproc, pid);
+    add_child_proc(curproc, child_proc);
+    add_pid(child_proc->info, pid);
     
     //Step5: Fork the thread
     
@@ -268,11 +270,11 @@ sys_fork(struct trapframe *tf, pid_t *retval){
         kfree(child_name);
         kfree(child_tf);
         as_destroy(child_addsp);
-        proc_destroy(childproc);
+        proc_destroy(child_proc);
         return ENOMEM; // out of memory
     }
     
-    *retval = child_proc->p_pid;
+    *retval = (child_proc->info)->pid;
     
     return (0);
 }

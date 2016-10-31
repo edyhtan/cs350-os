@@ -78,10 +78,8 @@ void sys__exit(int exitcode) {
       // change status
       pinfo->exit_status = true;
       pinfo->exit_code = exitcode;
-  
-      cv_broadcast(pid_table_cv, pid_table_lock);
   }
-  
+  cv_broadcast(pid_table_cv, pid_table_lock);
   lock_release(pid_table_lock);
   
 #endif

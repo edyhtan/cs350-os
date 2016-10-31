@@ -271,6 +271,8 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     void_package[0] = (void *)child_tf;
     void_package[1] = (void *)child_addsp;
     
+    kprintf("G\n");
+    
     int result = thread_fork(child_name, child_proc, &enter_forked_process, void_package, 0);
     
     if (result) {
@@ -286,8 +288,6 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     }
     
     KASSERT(retval != NULL);
-    
-    kprintf("G\n");
     
     *retval = (child_proc->info)->pid;
     return (0);

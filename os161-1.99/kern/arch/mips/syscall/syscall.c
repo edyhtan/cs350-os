@@ -191,8 +191,8 @@ enter_forked_process(void *pck, unsigned long nargs)
     
     struct trapframe *tf = ((void **)pck)[0];
     struct addrspace *as = ((void **)pck)[1];
-    KASSERT(childtf != NULL);
-    KASSERT(childas != NULL);
+    KASSERT(tf != NULL);
+    KASSERT(as != NULL);
     
     struct trapframe stackf = *tf;
     kfree(tf);

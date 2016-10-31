@@ -287,6 +287,8 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     
     KASSERT(retval != NULL);
     
+    kprintf("G\n");
+    
     *retval = (child_proc->info)->pid;
     return (0);
 }

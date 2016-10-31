@@ -92,8 +92,6 @@ void sys__exit(int exitcode) {
      will wake up the kernel menu thread */
   proc_destroy(p);
   
-  kprintf("X\n");
-  
   thread_exit();
   
   /* thread_exit() does not return, so we should never get here */
@@ -229,7 +227,6 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     as_copy(curproc->p_addrspace, &child_addsp);
     
     if (child_addsp == NULL){
-        kprintf("O/n");
         kfree(child_name);
         kfree(child_proc);
         kfree(child_tf);
@@ -282,7 +279,6 @@ sys_fork(struct trapframe *tf, pid_t *retval){
         pid_table[pid] = false;
         lock_release(pid_table_lock);
         proc_destroy(child_proc);
-        kprintf("O\n");
         return ENOMEM; // out of memory
     }
     

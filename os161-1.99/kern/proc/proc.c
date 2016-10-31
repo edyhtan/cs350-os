@@ -86,7 +86,6 @@ struct cv *pid_table_cv;
  *  pid_table_lock;
  *  pid_table_cv;
  * */
-static
 pid_t
 find_free_pid(){
     
@@ -104,6 +103,7 @@ find_free_pid(){
  * Create a proc structure.
  *
  */
+static
 struct proc *
 proc_create(const char *name)
 {

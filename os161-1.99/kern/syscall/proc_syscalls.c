@@ -260,6 +260,8 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     
     lock_release(pid_table_lock);
     
+    kprintf("G\n");
+    
     //create process_info and parent-child relationship
     child_proc->info = create_pinfo();
     add_child_proc(curproc, child_proc);
@@ -270,8 +272,6 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     void **void_package = kmalloc(sizeof(void *)*2);
     void_package[0] = (void *)child_tf;
     void_package[1] = (void *)child_addsp;
-    
-    kprintf("G\n");
     
     int result = thread_fork(child_name, child_proc, &enter_forked_process, void_package, 0);
     

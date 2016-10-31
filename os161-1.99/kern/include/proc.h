@@ -37,7 +37,8 @@
  */
 
 #include <spinlock.h>
-#include <thread.h> /* required for struct threadarray */
+#include <thread.h>
+#include "opt-A2.h" /* required for struct threadarray */
 
 struct addrspace;
 struct vnode;

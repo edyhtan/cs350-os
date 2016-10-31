@@ -270,7 +270,6 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     int result = thread_fork(child_name, child_proc, &enter_forked_process, void_package, 0);
     
     if (result) {
-        kprintf("haha");
         kfree(child_name);
         kfree(child_tf);
         as_destroy(child_addsp);
@@ -280,6 +279,8 @@ sys_fork(struct trapframe *tf, pid_t *retval){
         proc_destroy(child_proc);
         return ENOMEM; // out of memory
     }
+    
+    KASSERT(retval != NULL);
     
     *retval = 1;
     return (0);

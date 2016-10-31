@@ -210,9 +210,10 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     
     if (child_proc == NULL){
         kfree(child_name);
-        kprintf("O\n");
         return ENOMEM; // out of memory
     }
+    
+    kprintf("G\n");
     
     //Step2: Create and Copy address space from parent
     struct addrspace *child_addsp = NULL;
@@ -223,9 +224,10 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     if (child_tf == NULL){
         kfree(child_name);
         kfree(child_proc);
-        kprintf("O\n");
         return ENOMEM; // out of memory
     }
+    
+    kprintf("H\n");
     
     // copy address space
     int err = as_copy(curproc->p_addrspace, &child_addsp);
@@ -237,6 +239,8 @@ sys_fork(struct trapframe *tf, pid_t *retval){
         *retval = -1;
         return err;
     }
+    
+    kprintf("I\n");
 
     //Step3: Attach newly copied     address space to child
     child_proc->p_addrspace = child_addsp;// attach to children proc
@@ -260,7 +264,7 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     
     lock_release(pid_table_lock);
     
-    kprintf("G\n");
+    kprintf("J\n");
     
     //create process_info and parent-child relationship
     child_proc->info = create_pinfo();

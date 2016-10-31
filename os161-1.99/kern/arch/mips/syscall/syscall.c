@@ -36,6 +36,7 @@
 #include <current.h>
 #include <syscall.h>
 #include <addrspace.h>
+#include <proc.h>
 #include "opt-A2.h"
 
 /*

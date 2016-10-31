@@ -210,7 +210,7 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     
     if (child_proc == NULL){
         kfree(child_name);
-        kprint("O\n");
+        kprintf("O\n");
         return ENOMEM; // out of memory
     }
     
@@ -223,7 +223,7 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     if (child_tf == NULL){
         kfree(child_name);
         kfree(child_proc);
-        kprint("O\n");
+        kprintf("O\n");
         return ENOMEM; // out of memory
     }
     

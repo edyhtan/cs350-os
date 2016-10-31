@@ -189,7 +189,7 @@ sys_waitpid(pid_t pid,
     return(result);
   }
   
-  kprintf("R\n")''
+  kprintf("R\n");
   *retval = pid;
   return(0);
 }

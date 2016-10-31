@@ -135,7 +135,6 @@ sys_waitpid(pid_t pid,
      Fix this!
   */
 #if OPT_A2
-    kprintf("w\n");
     if (options != WAIT_MYPGRP){
         return EINVAL;
     }
@@ -227,7 +226,6 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     as_copy(curproc->p_addrspace, &child_addsp);
     
     if (child_addsp == NULL){
-        kprintf("O");
         kfree(child_name);
         kfree(child_proc);
         kfree(child_tf);

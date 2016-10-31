@@ -39,7 +39,6 @@ void sys__exit(int exitcode) {
   KASSERT(curproc->info != NULL);
   
 #if OPT_A2
-  kprintf("l\n");
   lock_acquire(pid_table_lock);
   
   struct process_info *pinfo = curproc->info;
@@ -93,7 +92,7 @@ void sys__exit(int exitcode) {
      will wake up the kernel menu thread */
   proc_destroy(p);
   
-  kprintf("x/n");
+  kprintf("X\n");
   
   thread_exit();
   
@@ -201,7 +200,6 @@ int
 sys_fork(struct trapframe *tf, pid_t *retval){
     
     KASSERT(curproc != NULL);
-    kprintf("f\n");
     //Step1: Create new name for the children proc
     char *child_name = kmalloc(sizeof(char) * NAME_MAX);
     strcpy(child_name, curproc->p_name);

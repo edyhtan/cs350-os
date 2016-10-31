@@ -50,7 +50,6 @@ void sys__exit(int exitcode) {
   struct process_info *children = pinfo->child_link;
   struct process_info *prev = NULL;
   
-  kprintf("c\n");
   while (children != NULL){
       
       // delete and free pid for all children who parent has not waited and died.
@@ -72,17 +71,16 @@ void sys__exit(int exitcode) {
       }
   }
   
-  kprintf("d\n");
+   // change status
+  pinfo->exit_status = true;
+  pinfo->exit_code = exitcode;
   
   if (pinfo->parent == NULL){
       // since there's no parent, the exit status is not insteresting
       pid_table[pinfo->pid] = false;
       destroy_pinfo(pinfo);
-  }else{
-      // change status
-      pinfo->exit_status = true;
-      pinfo->exit_code = exitcode;
   }
+  
   cv_broadcast(pid_table_cv, pid_table_lock);
   lock_release(pid_table_lock);
   
@@ -95,7 +93,10 @@ void sys__exit(int exitcode) {
      will wake up the kernel menu thread */
   proc_destroy(p);
   
+  kprintf("x/n");
+  
   thread_exit();
+  
   /* thread_exit() does not return, so we should never get here */
   panic("return from thread_exit in sys_exit\n");
 }

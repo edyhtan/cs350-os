@@ -111,8 +111,14 @@ extern struct semaphore *no_proc_sem;
 /* Call once during system startup to allocate data structures. */
 void proc_bootstrap(void);
 
+struct
+
 /* Create a fresh process for use by runprogram(). */
 struct proc *proc_create_runprogram(const char *name);
+
+#if OPT_A2
+struct proc *proc_create_runprogram_sub(const char *name);
+#endif
 
 /* Destroy a process. */
 void proc_destroy(struct proc *proc);

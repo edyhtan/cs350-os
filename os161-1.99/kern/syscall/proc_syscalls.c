@@ -230,6 +230,7 @@ sys_fork(struct trapframe *tf, pid_t *retval){
         kfree(child_name);
         kfree(child_proc);
         kfree(child_tf);
+        *retval = -1;
         return err;
     }
 
@@ -268,15 +269,20 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     
     int result = thread_fork(child_name, child_proc, &enter_forked_process, void_package, 0);
     
-    kprintf("reached/n");
+    kprintf("reached");
     
     if (result) {
+        kprintf("haha");
         kfree(child_name);
         kfree(child_tf);
         as_destroy(child_addsp);
+        lock_acquire(pid_table_lock);
+        pid_table[pid] = false
+        lock_release(pid_table_lock);
         proc_destroy(child_proc);
         return ENOMEM; // out of memory
     }
+    
     *retval = 1;
     return (0);
 }

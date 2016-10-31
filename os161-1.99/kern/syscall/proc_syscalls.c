@@ -154,18 +154,19 @@ sys_waitpid(pid_t pid,
     }
     
     lock_acquire(pid_table_lock);
+    
     //check if its a children
     if (pinfo == NULL || pinfo->pid != pid){
         if (pid_table[pid]){
+            kprintf("X\n");
             lock_release(pid_table_lock);
             return ECHILD; // not a child
         }else{
+            kprintf("O\n");
             lock_release(pid_table_lock);
             return ESRCH; // no such child
         }
     }
-    
-    kprintf("R\n");
     
     //check if child has exited
     while (pinfo->exit_status == false){

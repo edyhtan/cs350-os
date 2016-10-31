@@ -72,6 +72,8 @@ void sys__exit(int exitcode) {
       }
   }
   
+  kprintf("d\n");
+  
   if (pinfo->parent == NULL){
       // since there's no parent, the exit status is not insteresting
       pid_table[pinfo->pid] = false;

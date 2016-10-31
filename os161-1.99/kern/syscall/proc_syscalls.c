@@ -282,7 +282,7 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     
     KASSERT(retval != NULL);
     
-    *retval = 1;
+    *retval = (child_proc->info)->pid;
     return (0);
 }
 

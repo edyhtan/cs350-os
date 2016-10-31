@@ -226,7 +226,7 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     }
     
     // copy address space
-    int err = as_copy(curproc->p_addrspace, &child_addsp);
+    as_copy(curproc->p_addrspace, &child_addsp);
     
     if (child_addsp == NULL){
         kprintf("O/n");

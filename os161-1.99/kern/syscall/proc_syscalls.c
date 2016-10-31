@@ -276,9 +276,8 @@ sys_fork(struct trapframe *tf, pid_t *retval){
         return ENOMEM; // out of memory
     }
     
-    KASSERT(child_proc->info != NULL);
+    kprintf("reached/n");
     *retval = 1;
-    //*retval = (child_proc->info)->pid;
     return (0);
 }
 

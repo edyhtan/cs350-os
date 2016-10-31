@@ -35,6 +35,7 @@
 #include <thread.h>
 #include <current.h>
 #include <syscall.h>
+#include <addrspace.h>
 #include "opt-A2.h"
 
 /*
@@ -181,19 +182,22 @@ syscall(struct trapframe *tf)
  
 #if OPT_A2
 void
-enter_forked_process(void *tf, unsigned long nargs)
+enter_forked_process(void *pck, unsigned long nargs)
 {
 	(void)nargs;
     
     KASSERT(tf != NULL);
     
-    struct trapframe stackf = *(struct trapframe *)tf;
+    struct trapframe *tf = ((void **)pck)[0];
+    struct addrspace *as = ((void **)pck)[1];
+    KASSERT(childtf != NULL);
+    KASSERT(childas != NULL);
+    
+    struct trapframe stackf = *tf;
     kfree(tf);
     
-    /*
     curproc_setas(as);
-    */
-    //as_activate();
+    as_activate();
     
     stackf.tf_v0 = 0;
     stackf.tf_a3 = 0;

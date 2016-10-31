@@ -264,7 +264,9 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     
     //Step5: Fork the thread
     
-    void *void_tf= (void *) child_tf;
+    void **void_package = kmalloc(sizeof(void *)*2);
+    void_package[0] = (void *)child_tf;
+    void_package[1] = (void *)child_addsp;
     
     int result = thread_fork(child_name, child_proc, &enter_forked_process, void_tf, 0);
     

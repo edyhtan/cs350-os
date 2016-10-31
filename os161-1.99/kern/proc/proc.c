@@ -50,6 +50,7 @@
 #include <vfs.h>
 #include <synch.h>
 #include <kern/fcntl.h>  
+#include <limits.h>
 #include "opt-A2.h"
 
 /*

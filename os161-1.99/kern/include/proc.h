@@ -38,6 +38,7 @@
 
 #include <spinlock.h>
 #include <thread.h>
+#include <limits.h>
 #include "opt-A2.h" /* required for struct threadarray */
 
 struct addrspace;
@@ -138,7 +139,7 @@ struct addrspace *curproc_setas(struct addrspace *);
 struct process_info *create_pinfo();
 void destroy_pinfo(struct process_info *info);
 void add_child_proc(struct proc *parent, struct proc *child);
-void add_pid(struct, process_info *parent, pid_t pid);
+void add_pid(struct process_info *parent, pid_t pid);
 pid_t find_free_pid();
 #endif
 

@@ -48,6 +48,22 @@ struct semaphore;
 /*
  * Process structure.
  */
+ 
+ #if OPT_A2
+ /*
+  * used to keep track of children-parent relationship and other
+  * important process information.
+  * 
+  */
+struct process_info{
+    int exit_code;
+    bool exit_status;
+    pid_t pid;
+    struct process_info *parent;
+    struct process_info *next_sibling;
+    struct process_info *child_link;
+}
+
 struct proc {
 	char *p_name;			/* Name of this process */
 	struct spinlock p_lock;		/* Lock for this structure */
@@ -68,11 +84,22 @@ struct proc {
   struct vnode *console;                /* a vnode for the console device */
 #endif
 
+#if OPT_A2
+  struct process_info *info;
+#endif
+
 	/* add more material here as needed */
 };
 
+
 /* This is the process structure for the kernel and for kernel-only threads. */
 extern struct proc *kproc;
+
+#if OPT_A2
+extern bool pid_table[PID_MAX+1];
+extern struct lock *pid_table_lock;
+extern struct cv *pid_table_cv;
+#endif
 
 /* Semaphore used to signal when there are no more processes */
 #ifdef UW
@@ -100,5 +127,12 @@ struct addrspace *curproc_getas(void);
 /* Change the address space of the current process, and return the old one. */
 struct addrspace *curproc_setas(struct addrspace *);
 
+#if OPT_A2
+struct process_info *create_pinfo();
+void destroy_pinfo(struct process_info *info);
+void add_child_proc(struct proc *parent, struct proc *child);
+void add_pid(struct, process_info *parent, pid_t pid);
+pid_t find_free_pid();
+#endif
 
 #endif /* _PROC_H_ */

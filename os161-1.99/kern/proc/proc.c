@@ -70,11 +70,40 @@ struct semaphore *no_proc_sem;
 #endif  // UW
 
 
+#if OPT_A2
+bool pid_table[PID_MAX + 1];
+struct lock *pid_table_lock;
+struct cv *pid_table_cv;
+#endif
+
+
+#if OPT_A2
 
 /*
- * Create a proc structure.
- */
+ * Find a free spot to use your pid, will implement reuse later.
+ * Reminder this ONLY finds the PID, and you have to decide when to use it:
+ *  lock and cv for pid table is given:
+ *  pid_table_lock;
+ *  pid_table_cv;
+ * */
 static
+pid_t
+find_free_pid(){
+    
+    for (int i = 1; i < PID_MAX; i++){
+        if (!pid_table[i]){
+            return i;
+        }
+    }
+    
+    return -1;
+}
+
+#endif
+/*
+ * Create a proc structure.
+ *
+ */
 struct proc *
 proc_create(const char *name)
 {
@@ -102,6 +131,10 @@ proc_create(const char *name)
 #ifdef UW
 	proc->console = NULL;
 #endif // UW
+
+#if OPT_A2
+    proc->info = NULL;
+#endif
 
 	return proc;
 }
@@ -183,7 +216,6 @@ proc_destroy(struct proc *proc)
 	}
 	V(proc_count_mutex);
 #endif // UW
-	
 
 }
 
@@ -197,6 +229,16 @@ proc_bootstrap(void)
   if (kproc == NULL) {
     panic("proc_create for kproc failed\n");
   }
+  
+#if OPT_A2
+  pid_table_lock = lock_create("PID Table Lock");
+  pid_table_cv = cv_createa("PID CV");
+  for (int i = 1; i <= PID_MAX ; i++){
+      pid_table[i] = false;
+  }
+  pid_table[0] = true;
+#endif
+
 #ifdef UW
   proc_count = 0;
   proc_count_mutex = sem_create("proc_count_mutex",1);
@@ -216,9 +258,38 @@ proc_bootstrap(void)
  * It will have no address space and will inherit the current
  * process's (that is, the kernel menu's) current directory.
  */
+ 
 struct proc *
 proc_create_runprogram(const char *name)
 {
+/*      
+ * You'll understand ....... in time.
+ */ 
+#if OPT_A2
+    struct proc *proc = proc_create_runprogram_sub(name);
+    
+    // create all required fields
+    proc->info = create_pinfo();
+    
+    // retrieve a free pid
+    lock_acquire(pid_table_lock);
+    
+    pid_t pid = find_free_pid();
+    pid_table[pid] = true;
+    
+    lock_release(pid_table_lock);
+    
+    add_pid(proc, pid);
+    
+    // DEBUG
+        
+    return proc;
+}
+    
+struct proc *
+proc_create_runprogram_sub(const char *name)
+{
+#endif
 	struct proc *proc;
 	char *console_path;
 
@@ -364,3 +435,43 @@ curproc_setas(struct addrspace *newas)
 	spinlock_release(&proc->p_lock);
 	return oldas;
 }
+
+#if OPT_A2
+
+void 
+add_child_proc(struct proc *parent, struct proc *child)
+{
+    // create parent reference at child
+    (child->info)->parent = parent->info;
+    
+    // add child to parent's child link, link siblings for the child
+    (child->info)->next_sibling = (parent->info)->child_link;
+    (parent->info)->child_link = (child->info)->next_sibling;
+}
+
+struct process_info *
+create_pinfo()
+{
+    struct process_info *info = kmalloc(sizeof(struct proces_info));
+    info->parent = NULL;
+    info->pid = -1; // should always find a pid and call add_pid
+    info->next_sibling = NULL;
+    info->child_link = NULL;
+    info->exit_status = false;
+    
+    return info;
+}
+
+void
+add_pid(struct process_info *p, pid_t pid)
+{
+    p->pid = pid;
+}
+
+struct process_info *
+destory_pinfo( struct process_info *info )
+{
+    kfree(info);
+}
+
+#endif

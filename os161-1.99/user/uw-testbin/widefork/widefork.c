@@ -74,7 +74,6 @@ main(int argc, char *argv[])
   putchar('P');
   putchar('\n');
   pid3 = dofork(3);
-  putchar('S');
   dowait(pid1,1);
   dowait(pid2,2);
   dowait(pid3,3);

@@ -62,7 +62,7 @@ struct process_info{
     struct process_info *parent;
     struct process_info *next_sibling;
     struct process_info *child_link;
-}
+};
 #endif // OPT_A2
 
 struct proc {
@@ -110,8 +110,6 @@ extern struct semaphore *no_proc_sem;
 
 /* Call once during system startup to allocate data structures. */
 void proc_bootstrap(void);
-
-struct
 
 /* Create a fresh process for use by runprogram(). */
 struct proc *proc_create_runprogram(const char *name);

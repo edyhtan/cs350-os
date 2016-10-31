@@ -259,7 +259,7 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     child_proc->info = create_pinfo();
     add_child_proc(curproc, child_proc);
     add_pid(child_proc->info, pid);
-    
+    KASSERT(child_proc->info != NULL);
     //Step5: Fork the thread
     
     void **void_package = kmalloc(sizeof(void *)*2);
@@ -276,8 +276,8 @@ sys_fork(struct trapframe *tf, pid_t *retval){
         return ENOMEM; // out of memory
     }
     
+    KASSERT(child_proc->info != NULL);
     *retval = (child_proc->info)->pid;
-    kprintf("create process reached/n");
     return (0);
 }
 

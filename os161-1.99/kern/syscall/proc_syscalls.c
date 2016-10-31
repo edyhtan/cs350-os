@@ -143,8 +143,6 @@ sys_waitpid(pid_t pid,
         return ESRCH;
     }
     
-    kprintf("F\n");
-    
     //find the children first
     struct process_info *pinfo = (curproc->info)->child_link;
     
@@ -154,8 +152,6 @@ sys_waitpid(pid_t pid,
             
         pinfo = pinfo->next_sibling;
     }
-    
-    kprintf("R\n");
     
     lock_acquire(pid_table_lock);
     //check if its a children
@@ -168,6 +164,8 @@ sys_waitpid(pid_t pid,
             return ESRCH; // no such child
         }
     }
+    
+    kprintf("R\n");
     
     //check if child has exited
     while (pinfo->exit_status == false){

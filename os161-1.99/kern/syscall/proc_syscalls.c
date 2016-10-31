@@ -39,7 +39,7 @@ void sys__exit(int exitcode) {
   KASSERT(curproc->info != NULL);
   
 #if OPT_A2
-  kprintf("exit_start\n");
+  kprintf("l\n");
   lock_acquire(pid_table_lock);
   
   struct process_info *pinfo = curproc->info;
@@ -50,6 +50,7 @@ void sys__exit(int exitcode) {
   struct process_info *children = pinfo->child_link;
   struct process_info *prev = NULL;
   
+  kprintf("c\n");
   while (children != NULL){
       
       // delete and free pid for all children who parent has not waited and died.
@@ -134,7 +135,7 @@ sys_waitpid(pid_t pid,
      Fix this!
   */
 #if OPT_A2
-    kprintf("wait_start\n");
+    kprintf("w\n");
     if (options != WAIT_MYPGRP){
         return EINVAL;
     }
@@ -197,7 +198,7 @@ int
 sys_fork(struct trapframe *tf, pid_t *retval){
     
     KASSERT(curproc != NULL);
-    kprintf("fork_start\n");
+    kprintf("f\n");
     //Step1: Create new name for the children proc
     char *child_name = kmalloc(sizeof(char) * NAME_MAX);
     strcpy(child_name, curproc->p_name);

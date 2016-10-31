@@ -277,7 +277,7 @@ sys_fork(struct trapframe *tf, pid_t *retval){
         kfree(child_tf);
         as_destroy(child_addsp);
         lock_acquire(pid_table_lock);
-        pid_table[pid] = false
+        pid_table[pid] = false;
         lock_release(pid_table_lock);
         proc_destroy(child_proc);
         return ENOMEM; // out of memory

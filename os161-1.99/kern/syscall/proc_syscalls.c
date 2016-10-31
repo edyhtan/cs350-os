@@ -206,7 +206,7 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     //Step 1:Create process structure for child process
     struct proc *child_proc = proc_create_runprogram_sub(child_name);
     
-    if (childproc == NULL){
+    if (child_proc == NULL){
         kfree(child_name);
         return ENOMEM; // out of memory
     }

@@ -193,8 +193,8 @@ enter_forked_process(void *tf, unsigned long nargs)
     /*
     curproc_setas(as);
     */
+    //as_activate();
     
-    as_activate();
     stackf.tf_v0 = 0;
     stackf.tf_a3 = 0;
     

@@ -275,10 +275,9 @@ sys_fork(struct trapframe *tf, pid_t *retval){
         proc_destroy(child_proc);
         return ENOMEM; // out of memory
     }
-    kprintf("create process reached2/n");
     
     *retval = (child_proc->info)->pid;
-    
+    kprintf("create process reached/n");
     return (0);
 }
 

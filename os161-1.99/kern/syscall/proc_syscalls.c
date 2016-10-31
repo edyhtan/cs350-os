@@ -269,8 +269,6 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     
     int result = thread_fork(child_name, child_proc, &enter_forked_process, void_package, 0);
     
-    kprintf("reached");
-    
     if (result) {
         kprintf("haha");
         kfree(child_name);

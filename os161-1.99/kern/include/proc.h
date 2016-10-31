@@ -35,11 +35,10 @@
  *
  * Note: curproc is defined by <current.h>.
  */
-
+#include "opt-A2.h"
 #include <spinlock.h>
 #include <thread.h>
-#include <limits.h>
-#include "opt-A2.h" /* required for struct threadarray */
+#include <limits.h>/* required for struct threadarray */
 
 struct addrspace;
 struct vnode;

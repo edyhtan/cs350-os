@@ -147,9 +147,11 @@ sys_waitpid(pid_t pid,
     struct process_info *pinfo = (curproc->info)->child_link;
     
     while (pinfo != NULL){
-        if (pinfo->pid == pid)
+        if (pinfo->pid == pid){
+            kprintf("%d", pid);
+            kprintf("%d", pinfo->pid);
             break;
-            
+        }
         pinfo = pinfo->next_sibling;
     }
     
@@ -158,7 +160,6 @@ sys_waitpid(pid_t pid,
     //check if its a children
     if (pinfo == NULL || pinfo->pid != pid){
         if (pid_table[pid]){
-            kprintf("X\n");
             lock_release(pid_table_lock);
             return ECHILD; // not a child
         }else{

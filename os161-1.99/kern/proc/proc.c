@@ -450,7 +450,7 @@ add_child_proc(struct proc *parent, struct proc *child)
 struct process_info *
 create_pinfo()
 {
-    struct process_info *info = kmalloc(sizeof(struct proces_info));
+    struct process_info *info = kmalloc(sizeof(struct process_info));
     info->parent = NULL;
     info->pid = -1; // should always find a pid and call add_pid
     info->next_sibling = NULL;

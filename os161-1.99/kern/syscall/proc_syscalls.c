@@ -264,7 +264,7 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     
     void *void_tf= (void *) child_tf;
     
-    int result = thread_fork(child_name, child_proc, &enter_fork_process, void_tf, 0);
+    int result = thread_fork(child_name, child_proc, &enter_forked_process, void_tf, 0);
     
     if (result) {
         kfree(child_name);

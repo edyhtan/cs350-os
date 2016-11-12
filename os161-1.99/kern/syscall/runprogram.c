@@ -82,6 +82,7 @@ runprogram(char *progname)
 
 	/* Load the executable. */
 	result = load_elf(v, &entrypoint);
+
 	if (result) {
 		/* p_addrspace will go away when curproc is destroyed */
 		vfs_close(v);

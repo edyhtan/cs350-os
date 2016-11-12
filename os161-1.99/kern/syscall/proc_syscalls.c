@@ -287,4 +287,16 @@ sys_fork(struct trapframe *tf, pid_t *retval){
     return (0);
 }
 
+int
+sys_exev(int *retval, userptr_t program, userptr_t args){
+    
+    int result;
+    
+    *retval = -1;
+    
+    int argc = 0;
+    
+    result = runprogram(program);
+}
+
 #endif /* OPT_A2 */

@@ -288,13 +288,14 @@ sys_fork(struct trapframe *tf, pid_t *retval){
 }
 
 int
-sys_exev(int *retval, userptr_t program, userptr_t args){
+sys_execv(int *retval, userptr_t program, userptr_t args){
     
     int result;
     
-    *retval = -1;
+    (void) args;
     
-    int argc = 0;
+    *retval = -1;
+    //int argc = 0;
     
     result = runprogram(program);
 }

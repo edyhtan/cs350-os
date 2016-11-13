@@ -298,6 +298,8 @@ sys_execv(int *retval, char *program, userptr_t args){
     //int argc = 0;
     
     result = runprogram(program);
+    
+    return result;
 }
 
 #endif /* OPT_A2 */

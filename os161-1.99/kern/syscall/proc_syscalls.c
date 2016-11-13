@@ -2,7 +2,7 @@
 #include <kern/errno.h>
 #include <kern/unistd.h>
 #include <kern/wait.h>
-#include <mips/trapframe.h>
+#include "mips/trapframe.h"
 #include <lib.h>
 #include <syscall.h>
 #include <current.h>

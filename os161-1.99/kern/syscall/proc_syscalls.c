@@ -3,6 +3,7 @@
 #include <kern/unistd.h>
 #include <kern/wait.h>
 #include "mips/trapframe.h"
+#include <vfs.h>
 #include <lib.h>
 #include <syscall.h>
 #include <current.h>

@@ -67,12 +67,10 @@ runprogram(char *program)
 	vaddr_t entrypoint, stackptr;
 	int result;
     
-    kprintf("3.5\n");
     #if OPT_A2
     char *progname = argv[0];
     #endif
     
-     kprintf("4\n");
 	/* Open the file. */
 	result = vfs_open(progname, O_RDONLY, 0, &v);
 
@@ -97,6 +95,7 @@ runprogram(char *program)
 	/* Load the executable. */
 	result = load_elf(v, &entrypoint);
 
+    kprintf("5\n");
 	if (result) {
 		/* p_addrspace will go away when curproc is destroyed */
 		vfs_close(v);
@@ -108,10 +107,12 @@ runprogram(char *program)
 
 	/* Define the user stack in the address space */
 	result = as_define_stack(as, &stackptr);
-	if (result) {
+	
+    if (result) {
 		/* p_addrspace will go away when curproc is destroyed */
 		return result;
 	}
+    
     
     #if OPT_A2
     // copy arguments on to the stack

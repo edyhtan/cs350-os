@@ -441,8 +441,6 @@ runprog(int arg_count, char **args, bool km_used)
         runprog_cleanup(arg_count, args);
     }
     
-    kprintf("here4/n");
-    
 	/* Warp to user mode. */
 	enter_new_process(arg_count, user_arg, stackptr, entrypoint);
 	
@@ -466,7 +464,7 @@ args_to_userspace(vaddr_t *stackptr, int argc, char **args)
         // move stack ptr
         stackpt -= len;
         user_arg[i] = (char *) stackpt;
-        copyout((const void *) args[i], (userptr_t) stackptr, len);
+        copyout((const void *) args[i], (userptr_t) stackpt, len);
     }
     
     user_arg[argc] = NULL; // append a null to the end the user stack

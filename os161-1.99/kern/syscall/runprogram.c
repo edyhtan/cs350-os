@@ -74,6 +74,7 @@ runprogram(char *program)
 	/* Open the file. */
 	result = vfs_open(progname, O_RDONLY, 0, &v);
     
+    kprintf("HERE?!\n");
 	if (result) {
 		return result;
 	}

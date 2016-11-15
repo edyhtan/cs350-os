@@ -81,6 +81,8 @@ runprogram(char *program)
 	/* We should be a new process. */
 	//KASSERT(curproc_getas() == NULL);
 
+
+    kprintf("5\n");
 	/* Create a new address space. */
 	as = as_create();
 	if (as ==NULL) {
@@ -88,6 +90,7 @@ runprogram(char *program)
 		return ENOMEM;
 	}
 
+    kprintf("6\n");
 	/* Switch to it and activate it. */
 	curproc_setas(as);
 	as_activate();
@@ -95,7 +98,7 @@ runprogram(char *program)
 	/* Load the executable. */
 	result = load_elf(v, &entrypoint);
 
-    kprintf("5\n");
+    kprintf("7\n");
 	if (result) {
 		/* p_addrspace will go away when curproc is destroyed */
 		vfs_close(v);

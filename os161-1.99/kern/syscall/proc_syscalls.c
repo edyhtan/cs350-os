@@ -339,14 +339,13 @@ copying_arg(userptr_t program, userptr_t args_, int *count){
     }
     */
     // set all pointers to NULL first for easy memory cleanup
-    for (int i = 1; i <= argc; i++){
+    for (int i = 0; i < argc; i++){
         argv[i] = NULL;
     }
     
     // copy arguments
     for (int i = 0; i < argc; i++){
         argv[i] = kstrdup((const char *)args[i]);
-        kprintf("%s\n", argv[i]);
         if (argv[i] == NULL){
             runprog_cleanup(argc, argv);
             return NULL;

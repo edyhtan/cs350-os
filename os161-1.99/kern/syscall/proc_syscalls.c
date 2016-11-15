@@ -292,8 +292,9 @@ sys_fork(struct trapframe *tf, pid_t *retval){
 
 int
 sys_execv(int *retval, userptr_t program, userptr_t args){
-    kprintf("1\n");
     int result;
+    
+    kprintf("2\n");
     
     *retval = -1;
     //int argc = 0;

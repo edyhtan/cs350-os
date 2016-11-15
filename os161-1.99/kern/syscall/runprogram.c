@@ -137,8 +137,8 @@ userptr_t
 copy_to_userspace(vaddr_t *stackptr_, int argc, char **argv)
 {
 	vaddr_t stackptr = *stackptr_;
-
-    kprintf("1\n");
+    
+    kprintf("%d\n", argc);
     
 	char **user;
 	stackptr -= sizeof(char *) * (argc + 1);
@@ -148,7 +148,6 @@ copy_to_userspace(vaddr_t *stackptr_, int argc, char **argv)
 		stackptr -= len;
 		user[i] = (char *)stackptr;
 		copyout( argv[i], (userptr_t) stackptr, len);
-        kprintf("%s\n", argv[i]);
 	}
 	user[argc] = NULL;
 

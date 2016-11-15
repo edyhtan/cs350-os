@@ -427,5 +427,7 @@ enter_new_process(int argc, userptr_t argv, vaddr_t stack, vaddr_t entry)
 	tf.tf_a1 = (vaddr_t)argv;
 	tf.tf_sp = stack;
     
+    kprintf("Hello\n");
+    
 	mips_usermode(&tf);
 }

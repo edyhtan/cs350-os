@@ -119,8 +119,6 @@ runprogram(char *program)
         runprog_cleanup(argc, argv);
     }
     
-    kprintf("HELLO\n");
-    
     enter_new_process(argc /*argc*/, user_arg /*userspace addr of argv*/,
 			  stackptr, entrypoint);
     

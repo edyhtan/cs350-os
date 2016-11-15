@@ -307,7 +307,7 @@ sys_execv(int *retval, userptr_t program, userptr_t args){
     }
     
     (void) args;
-    result = runprogram(argc, args, true);
+    result = runprogram(argc, (char **)args, true);
     
     return result;
 }

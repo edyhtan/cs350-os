@@ -55,10 +55,12 @@
  */
  
 #if OPT_A2
+
 int 
 runprogram(int argc, char **args){
     return runprog(argc, args, false);
 }
+
 #else
 int
 runprogram(char *progname)

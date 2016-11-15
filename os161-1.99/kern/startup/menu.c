@@ -45,7 +45,7 @@
 #include "opt-synchprobs.h"
 #include "opt-sfs.h"
 #include "opt-net.h"
-
+#include "opt-A2.h"
 /*
  * In-kernel menu and command dispatcher.
  */
@@ -106,8 +106,10 @@ cmd_progthread(void *ptr, unsigned long nargs)
 	int result;
 
     #if OPT_A2
+    
     (void) progname;
     result = runprogram((int)nargs, args);
+    
     #else
 	KASSERT(nargs >= 1);
 

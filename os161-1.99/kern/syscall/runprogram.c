@@ -72,10 +72,12 @@ runprogram(char *program)
     #endif
     
     kprintf("5\n");
+    
+    KASSERT(progname != NULL);
+    
 	/* Open the file. */
 	result = vfs_open(progname, O_RDONLY, 0, &v);
-
-    kprintf("5\n");
+    
 	if (result) {
 		return result;
 	}

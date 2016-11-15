@@ -78,7 +78,6 @@ runprogram(char *program)
 		return result;
 	}
 
-    kprintf("HERE?!\n");
 	/* We should be a new process. */
 	//KASSERT(curproc_getas() == NULL);
 

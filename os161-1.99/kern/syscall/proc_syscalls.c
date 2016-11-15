@@ -327,8 +327,9 @@ copying_arg(userptr_t program, userptr_t args_, int *count){
     }
     
     //create an array for argv
-    char **argv = kmalloc(sizeof(char *) * (argc+1)); // with a NULL poiner at the end
+    char **argv = kmalloc(sizeof(char *) * (argc)); // with a NULL poiner at the end
     
+    /*
     // append progname as the first argument
     argv[0] = kstrdup((const char *)program);
     
@@ -336,15 +337,15 @@ copying_arg(userptr_t program, userptr_t args_, int *count){
         kfree(argv);
         return NULL; // E2BIG
     }
-    
+    */
     // set all pointers to NULL first for easy memory cleanup
     for (int i = 1; i <= argc; i++){
         argv[i] = NULL;
     }
     
     // copy arguments
-    for (int i = 1; i < argc; i++){
-        argv[i] = kstrdup((const char *)args[i-1]);
+    for (int i = 0; i < argc; i++){
+        argv[i] = kstrdup((const char *)args[i]);
         kprintf("%s\n", argv[i]);
         if (argv[i] == NULL){
             runprog_cleanup(argc, argv);

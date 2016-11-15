@@ -146,7 +146,7 @@ copy_to_userspace(vaddr_t *stackptr_, int argc, char **argv)
 		int len = strlen(argv[i]) + 1;
 		stackptr -= len;
 		user[i] = (char *)stackptr;
-		copyout((const void *) argv[i], (userptr_t) stackptr, len);
+		copyout( argv[i], (userptr_t) stackptr, len);
 	}
 	user[argc] = NULL;
 

@@ -435,14 +435,16 @@ runprog(int arg_count, char **args, bool km_used)
 		return result;
 	}
     
-    userptr_t user_arg = args_to_userspace(&stackptr, arg_count, args);
+    userptr_t user_arg = args_to_userspace(&stackptr, arg_count, args);// align arguments to the user stack
     
     if (km_used){
         runprog_cleanup(arg_count, args);
     }
-
+    
+    kprintf("here4/n");
+    
 	/* Warp to user mode. */
-	enter_new_process(arg_count, user_arg, stackptr, entrypoint); // align arguments to the user stack
+	enter_new_process(arg_count, user_arg, stackptr, entrypoint);
 	
 	/* enter_new_process does not return. */
 	panic("enter_new_process returned\n");
@@ -470,8 +472,6 @@ args_to_userspace(vaddr_t *stackptr, int argc, char **args)
     user_arg[argc] = NULL; // append a null to the end the user stack
     
     *stackptr = stackpt;
-    
-    kprintf("here3\n");
     
     return (userptr_t) user_arg;
 }

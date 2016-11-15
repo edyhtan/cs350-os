@@ -71,7 +71,7 @@ runprogram(char *program)
     char *progname = argv[0];
     #endif
     
-    kprintf ("hello\n")
+    kprintf ("hello\n");
 
 	/* Open the file. */
 	result = vfs_open(progname, O_RDONLY, 0, &v);

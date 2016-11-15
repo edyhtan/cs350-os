@@ -71,9 +71,11 @@ runprogram(char *program)
     char *progname = argv[0];
     #endif
     
+    kprintf("5\n");
 	/* Open the file. */
 	result = vfs_open(progname, O_RDONLY, 0, &v);
 
+    kprintf("5\n");
 	if (result) {
 		return result;
 	}
@@ -82,7 +84,6 @@ runprogram(char *program)
 	//KASSERT(curproc_getas() == NULL);
 
 
-    kprintf("5\n");
 	/* Create a new address space. */
 	as = as_create();
 	if (as ==NULL) {
@@ -90,7 +91,6 @@ runprogram(char *program)
 		return ENOMEM;
 	}
 
-    kprintf("6\n");
 	/* Switch to it and activate it. */
 	curproc_setas(as);
 	as_activate();
@@ -98,7 +98,6 @@ runprogram(char *program)
 	/* Load the executable. */
 	result = load_elf(v, &entrypoint);
 
-    kprintf("7\n");
 	if (result) {
 		/* p_addrspace will go away when curproc is destroyed */
 		vfs_close(v);

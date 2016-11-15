@@ -306,58 +306,57 @@ sys_execv(int *retval, userptr_t program, userptr_t args){
         return E2BIG; // out of memory
     }
     
-    (void) args;
     result = runprogram(argc, (char **)args, true);
     
     return result;
 }
 
 char **
-copying_arg(userptr_t program, userptr_t args, int *count){
+copying_arg(userptr_t program, userptr_t args_, int *count){
     
     // count the number of args
-    int arg_count = 1;
-    char **current_arg = (char ** )args;
+    int argc = 1;
+    char **args = (char ** )args_;
+    char *progname = (char *) program;
     
-    while (current_arg != NULL){
-        arg_count++;
-        current_arg++;
+    //count the size of the array
+    int c = 0;
+    
+    while (args[c] != NULL{
+        c++;
+        argc++;
     }
     
-    //allocate args, giving one extra NULL pointer at the end to avoid errors
-    char **arg_return = kmalloc(sizeof(char *) * (arg_count+1));
+    //create an array for argv
+    char **argv = kmalloc(sizeof(char *) * (argc+1)); // with a NULL poiner at the end
     
-    if (arg_return == NULL){
-        return NULL; // out of memory
+    // append progname as the first argument
+    argv[0] = kstrdup((const char *)program);
+    
+    if (argv[0] == NULL){
+        kfree(argv);
+        return NULL; // E2BIG
     }
     
-    //copy the program name as the first arguement
-    arg_return[0] = kstrdup((const char *) program);
-    if (arg_return[0] == NULL){
-        kfree(arg_return);
-        return NULL; // out of memory
+    // set all pointers to NULL first for easy memory cleanup
+    for (int i = 1; i <= argc; i++{
+        argv[i] = NULL;
     }
     
-    //Assign all NULL pointers
-    for (int i = 1; i < arg_count + 1; i++){
-        arg_return[i] = NULL;
-    }
-    
-    //copy args
-    current_arg = (char **) args; // starting from argument 0
-    for (int i = 1; i < arg_count; i++){
-        arg_return[i] = kstrdup((const char *) current_arg[i-1]);
+    // copy arguments
+    for (int i = 1; i < argc; i++){
+        argv[i] = kstrdup((const char *)args[i-1]);
         
-        // perform cleanup if error
-        if (arg_return[i] == NULL){
-            runprog_cleanup(arg_count, arg_return);
-            break;
+        if (argv[i] == NULL){
+            runprog_cleanup(argc, argv);
+            return NULL;
         }
     }
     
-    *count = arg_count;
+    *count = argc;
     
-    return arg_return;
+    return argv;
+    
 }
 
 void runprog_cleanup(int argc, char **args){

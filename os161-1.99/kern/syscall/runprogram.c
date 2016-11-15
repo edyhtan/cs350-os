@@ -144,23 +144,19 @@ copy_to_userspace(vaddr_t *stackptr_, int argc, char **argv)
 {
 	vaddr_t stackptr = *stackptr_;
 
-	char **user_argv;
-	//First, make space for an argv
+	char **user;
 	stackptr -= sizeof(char *) * (argc + 1);
-	user_argv = (char **)stackptr;
-	//Then, copy each string in argv
+	user = (char **)stackptr;
 	for(int i = 0; i < argc; i++) {
-		int length = strlen(argv[i]) + 1;
-		//Move stack ptr
-		stackptr -= length;
-		//Set the ptr in argv
-		user_argv[i] = (char *)stackptr;
-		copyout((const void *) argv[i], (userptr_t) stackptr, length);
+		int len = strlen(argv[i]) + 1;
+		stackptr -= len;
+		user[i] = (char *)stackptr;
+		copyout((const void *) argv[i], (userptr_t) stackptr, len);
 	}
-	user_argv[argc] = NULL;
+	user[argc] = NULL;
 
 	*stackptr_ = stackptr;
 
-	return (userptr_t) user_argv;
+	return (userptr_t) user;
 }
 #endif

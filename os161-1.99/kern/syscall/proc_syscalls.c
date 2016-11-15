@@ -327,7 +327,7 @@ copying_arg(userptr_t program, userptr_t args_, int *count){
     }
     
     //create an array for argv
-    char **argv = kmalloc(sizeof(char *) * (argc)); // with a NULL poiner at the end
+    char **argv = kmalloc(sizeof(char *) * (argc+1)); // with a NULL poiner at the end
     
     /*
     // append progname as the first argument
@@ -339,7 +339,7 @@ copying_arg(userptr_t program, userptr_t args_, int *count){
     }
     */
     // set all pointers to NULL first for easy memory cleanup
-    for (int i = 0; i < argc; i++){
+    for (int i = 0; i <= argc; i++){
         argv[i] = NULL;
     }
     

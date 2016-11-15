@@ -305,7 +305,7 @@ sys_execv(int *retval, userptr_t program, userptr_t args){
         return E2BIG; // out of memory
     }
     
-    result = runprogram(argc, (char **)args, true);
+    result = runprogram(argc, (char **)argcpy, true);
     
     return result;
 }
@@ -329,7 +329,7 @@ copying_arg(userptr_t program, userptr_t args_, int *count){
     //create an array for argv
     char **argv = kmalloc(sizeof(char *) * (argc+1)); // with a NULL poiner at the end
     
-    /*
+    
     // append progname as the first argument
     argv[0] = kstrdup((const char *)program);
     
@@ -337,7 +337,7 @@ copying_arg(userptr_t program, userptr_t args_, int *count){
         kfree(argv);
         return NULL; // E2BIG
     }
-    */
+    
     // set all pointers to NULL first for easy memory cleanup
     for (int i = 0; i <= argc; i++){
         argv[i] = NULL;

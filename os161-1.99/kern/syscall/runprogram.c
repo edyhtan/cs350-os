@@ -71,8 +71,6 @@ runprogram(char *program)
     char *progname = argv[0];
     #endif
     
-    kprintf("5\n");
-    
     KASSERT(progname != NULL);
     
 	/* Open the file. */

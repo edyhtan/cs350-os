@@ -307,7 +307,6 @@ sys_execv(int *retval, userptr_t program, userptr_t args){
         return E2BIG; // out of memory
     }
     
-    kprintf("3\n");
     result = runprogram(argc, (char **)argcpy, true);
     
     return result;
@@ -342,7 +341,7 @@ copying_arg(userptr_t program, userptr_t args_, int *count){
     }
     
     // set all pointers to NULL first for easy memory cleanup
-    for (int i = 0; i <= argc; i++){
+    for (int i = 1; i <= argc; i++){
         argv[i] = NULL;
     }
     

@@ -164,7 +164,6 @@ sys_waitpid(pid_t pid,
             lock_release(pid_table_lock);
             return ECHILD; // not a child
         }else{
-            kprintf("O\n");
             lock_release(pid_table_lock);
             return ESRCH; // no such child
         }
@@ -293,8 +292,6 @@ sys_fork(struct trapframe *tf, pid_t *retval){
 int
 sys_execv(int *retval, userptr_t program, userptr_t args){
     int result;
-    
-    kprintf("2\n");
     
     *retval = -1;
     //int argc = 0;

@@ -345,7 +345,7 @@ copying_arg(userptr_t program, userptr_t args, int *count){
     //copy args
     current_arg = (char **) args; // starting from argument 0
     for (int i = 1; i < arg_count; i++){
-        arg_return = kstrdup((const char *) current_arg[i-1]);
+        arg_return[i] = kstrdup((const char *) current_arg[i-1]);
         
         // perform cleanup if error
         if (arg_return[i] == NULL){

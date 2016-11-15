@@ -312,7 +312,7 @@ sys_execv(int *retval, userptr_t program, userptr_t args){
 }
 
 char **
-copying_arg(userptr_t program, userptr_t args, char *count){
+copying_arg(userptr_t program, userptr_t args, int *count){
     
     // count the number of args
     int arg_count = 1;
@@ -331,7 +331,7 @@ copying_arg(userptr_t program, userptr_t args, char *count){
     }
     
     //copy the program name as the first arguement
-    arg_retrun[0] = kstrdup((const char *) program);
+    arg_return[0] = kstrdup((const char *) program);
     if (arg_return[0] == NULL){
         kfree(arg_retrun);
         return NULL; // out of memory
@@ -435,7 +435,7 @@ runprog(int arg_count, char **args, bool km_used)
 		return result;
 	}
 
-    userptr_t user_arg = args_to_userspace(&stackptr, argc, args);
+    userptr_t user_arg = args_to_userspace(&stackptr, arg_count, args);
     
     if (km_used){
         runprog_cleanup(arg_count, args);
@@ -450,7 +450,7 @@ runprog(int arg_count, char **args, bool km_used)
 }
 
 userptr_t
-args_to_userspace(vaddr_t *stackptr, int argc, char **args)vad
+args_to_userspace(vaddr_t *stackptr, int argc, char **args)
 {
     vaddr_t stackpt = *stackptr;
     

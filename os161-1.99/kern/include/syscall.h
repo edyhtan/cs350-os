@@ -71,7 +71,7 @@ int sys_waitpid(pid_t pid, userptr_t status, int options, pid_t *retval);
 #if OPT_A2
 int sys_fork(struct trapframe *tf, pid_t *retval);
 int sys_execv(int *retval, char *program, userptr_t args);
-int copying_arg(userptr_t name, userptr_t args, int *count);
+int copying_arg(userptr_t program, userptr_t args, int *count);
 void runprog_cleanup(int argc, char **argv);
 int runprog(int args_count, char **args, bool using_kernel_mem);
 userptr_t args_to_userspace(vaddr_t *stackptr, int argc, char **args);

@@ -435,7 +435,7 @@ runprog(int arg_count, char **args, bool km_used)
 		return result;
 	}
     
-    userptr_t user_arg = args_to_userspace(&stackptr, arg_count, args);// align arguments to the user stack
+    //userptr_t user_arg = args_to_userspace(&stackptr, arg_count, args);// align arguments to the user stack
     
     if (km_used){
         runprog_cleanup(arg_count, args);

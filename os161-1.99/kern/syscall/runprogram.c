@@ -122,8 +122,6 @@ runprogram(char *program)
     enter_new_process(argc /*argc*/, user_arg /*userspace addr of argv*/,
 			  stackptr, entrypoint);
     
-    kprintf("hello\n");
-    
     #else
 	/* Warp to user mode. */
 	enter_new_process(0 /*argc*/, NULL /*userspace addr of argv*/,
@@ -148,6 +146,7 @@ copy_to_userspace(vaddr_t *stackptr_, int argc, char **argv)
 		stackptr -= len;
 		user[i] = (char *)stackptr;
 		copyout( argv[i], (userptr_t) stackptr, len);
+        kprintf("%s\n", argv[i]);
 	}
 	user[argc] = NULL;
 

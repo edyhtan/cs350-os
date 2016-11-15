@@ -374,7 +374,6 @@ void runprog_cleanup(int argc, char **args){
 int
 runprog(int arg_count, char **args, bool km_used)
 {
-     kprintf("here\n");
 	struct addrspace *as, *oldas;
 	struct vnode *v;
 	vaddr_t entrypoint, stackptr;
@@ -436,6 +435,8 @@ runprog(int arg_count, char **args, bool km_used)
 		return result;
 	}
 
+    kprintf("here\n");
+    
     userptr_t user_arg = args_to_userspace(&stackptr, arg_count, args);
     
     if (km_used){
@@ -453,8 +454,8 @@ runprog(int arg_count, char **args, bool km_used)
 userptr_t
 args_to_userspace(vaddr_t *stackptr, int argc, char **args)
 {
+    kprintf("here2\n");
     vaddr_t stackpt = *stackptr;
-    
     char **user_arg;
     
     stackptr -= sizeof(char *) * (argc + 1); // give enough space to the stack

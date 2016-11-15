@@ -300,7 +300,7 @@ sys_execv(int *retval, userptr_t program, userptr_t args){
     
     // copy arguments and program name into the kernal
     int argc;
-    char **argcpy = copying_arg(args, &argc); // argc are expected to be at least 1
+    char **argcpy = copying_arg(program, args, &argc); // argc are expected to be at least 1
 
     if (argcpy == NULL){
         return E2BIG; // out of memory
@@ -312,11 +312,12 @@ sys_execv(int *retval, userptr_t program, userptr_t args){
 }
 
 char **
-copying_arg(userptr_t args_, int *count){
+copying_arg(userptr_t program, userptr_t args_, int *count){
     
     // count the number of args
     int argc = 1;
     char **args = (char ** )args_;
+    (void) program;
     
     //count the size of the array
     int c = 0;

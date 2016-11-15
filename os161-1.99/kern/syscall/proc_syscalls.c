@@ -462,7 +462,7 @@ args_to_userspace(vaddr_t *stackptr_, int argc, char **args)
     for (int i = 0; i < argc; i++){
         int len = strlen(args[i]) + 1;
         // move stack ptr
-        stackpt -= len;
+        stackptr -= len;
         user_arg[i] = (char *) stackptr;
         copyout((const void *) args[i], (userptr_t) stackptr, len);
     }

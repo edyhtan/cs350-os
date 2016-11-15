@@ -314,7 +314,7 @@ char **
 copying_arg(userptr_t program, userptr_t args_, int *count){
     
     // count the number of args
-    int argc = 1;
+    int argc = 0;
     char **args = (char ** )args_;
     (void) program;
     
@@ -344,7 +344,7 @@ copying_arg(userptr_t program, userptr_t args_, int *count){
     }
     
     // copy arguments
-    for (int i = 0; i < argc-1; i++){
+    for (int i = 0; i < argc; i++){
         argv[i] = kstrdup((const char *)args[i]);
         kprintf("%s\n", argv[i]);
         if (argv[i] == NULL){

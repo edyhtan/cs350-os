@@ -44,6 +44,7 @@
 #include <vfs.h>
 #include <syscall.h>
 #include <test.h>
+#include <copyinout.h>
 #include "opt-A2.h"
 #include "mips/trapframe.h"
 

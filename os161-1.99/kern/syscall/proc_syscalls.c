@@ -317,12 +317,11 @@ copying_arg(userptr_t program, userptr_t args_, int *count){
     // count the number of args
     int argc = 1;
     char **args = (char ** )args_;
-    char *progname = (char *) program;
     
     //count the size of the array
     int c = 0;
     
-    while (args[c] != NULL{
+    while (args[c] != NULL){
         c++;
         argc++;
     }

@@ -307,7 +307,7 @@ sys_execv(int *retval, userptr_t program, userptr_t args){
         return E2BIG; // out of memory
     }
     
-    kprintf("WELL\n");
+    kprintf("3\n");
     result = runprogram(argc, (char **)argcpy, true);
     
     return result;

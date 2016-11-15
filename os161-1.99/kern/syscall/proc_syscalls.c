@@ -361,7 +361,7 @@ copying_arg(userptr_t program, userptr_t args, int *count){
 
 void runprog_cleanup(int argc, char **args){
     
-    for (int i = 0 ; i < argc; i ++){
+    for (int i = 0 ; i < argc; i++){
         if (args[i] != NULL){
             kfree(args[i]);
         }
@@ -450,26 +450,26 @@ runprog(int arg_count, char **args, bool km_used)
 }
 
 userptr_t
-args_to_userspace(vaddr_t *stackptr, int argc, char **args)
+args_to_userspace(vaddr_t *stackptr_, int argc, char **args)
 {
-    vaddr_t stackpt = *stackptr;
+    vaddr_t stackptr = *stackptr_;
     char **user_arg;
     
     stackptr -= sizeof(char *) * (argc + 1); // give enough space to the stack
-    user_arg = (char **)stackpt;
+    user_arg = (char **)stackptr;
     
     //copy the strings to the stack
     for (int i = 0; i < argc; i++){
         int len = strlen(args[i]) + 1;
         // move stack ptr
         stackpt -= len;
-        user_arg[i] = (char *) stackpt;
-        copyout((const void *) args[i], (userptr_t) stackpt, len);
+        user_arg[i] = (char *) stackptr;
+        copyout((const void *) args[i], (userptr_t) stackptr, len);
     }
     
     user_arg[argc] = NULL; // append a null to the end the user stack
     
-    *stackptr = stackpt;
+    *stackptr_ = stackptr;
     
     return (userptr_t) user_arg;
 }

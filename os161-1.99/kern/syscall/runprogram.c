@@ -53,6 +53,13 @@
  *
  * Calls vfs_open on progname and thus may destroy it.
  */
+ 
+#if OPT_A2
+int 
+runprogram(int argc, char **args){
+    return runprog(argc, args, false);
+}
+#else
 int
 runprogram(char *progname)
 {
@@ -108,4 +115,5 @@ runprogram(char *progname)
 	panic("enter_new_process returned\n");
 	return EINVAL;
 }
+#endif
 

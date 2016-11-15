@@ -40,5 +40,5 @@ main(int argc, char *argv[])
 		printf("argv[%d] -> %s\n", i, tmp);
 	}
 
-	return 0;
+	retun 0;
 }

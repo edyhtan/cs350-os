@@ -105,6 +105,9 @@ cmd_progthread(void *ptr, unsigned long nargs)
 	char progname[128];
 	int result;
 
+    #if OPT_A2
+    
+    #else
 	KASSERT(nargs >= 1);
 
 	if (nargs > 2) {
@@ -117,6 +120,7 @@ cmd_progthread(void *ptr, unsigned long nargs)
 	strcpy(progname, args[0]);
 
 	result = runprogram(progname);
+    #endif
 	if (result) {
 		kprintf("Running program %s failed: %s\n", args[0],
 			strerror(result));

@@ -119,10 +119,11 @@ runprogram(char *program)
         runprog_cleanup(argc, argv);
     }
     
+    kprintf("HELLO\n");
+    
     enter_new_process(argc /*argc*/, user_arg /*userspace addr of argv*/,
 			  stackptr, entrypoint);
     
-
     #else
 	/* Warp to user mode. */
 	enter_new_process(0 /*argc*/, NULL /*userspace addr of argv*/,

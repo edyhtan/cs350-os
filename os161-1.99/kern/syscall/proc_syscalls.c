@@ -325,6 +325,7 @@ copying_arg(userptr_t program, userptr_t args_, int *count){
         c++;
         argc++;
     }
+    kprintf ("hello\n");
     
     //create an array for argv
     char **argv = kmalloc(sizeof(char *) * (argc+1)); // with a NULL poiner at the end

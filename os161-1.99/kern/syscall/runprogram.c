@@ -119,10 +119,10 @@ runprogram(char *program)
         runprog_cleanup(argc, argv);
     }
     
-    kprintf("Hello\n");
-    
     enter_new_process(argc /*argc*/, user_arg /*userspace addr of argv*/,
 			  stackptr, entrypoint);
+    
+    kprintf("hello\n");
     
     #else
 	/* Warp to user mode. */
@@ -152,8 +152,6 @@ copy_to_userspace(vaddr_t *stackptr_, int argc, char **argv)
 	user[argc] = NULL;
 
 	*stackptr_ = stackptr;
-    
-    kprintf("Hello\n");
 
 	return (userptr_t) user;
 }

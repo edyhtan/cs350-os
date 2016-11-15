@@ -73,12 +73,12 @@ runprogram(char *program)
 
 	/* Open the file. */
 	result = vfs_open(progname, O_RDONLY, 0, &v);
-    
-    kprintf("HERE?!\n");
+
 	if (result) {
 		return result;
 	}
 
+    kprintf("HERE?!\n");
 	/* We should be a new process. */
 	//KASSERT(curproc_getas() == NULL);
 

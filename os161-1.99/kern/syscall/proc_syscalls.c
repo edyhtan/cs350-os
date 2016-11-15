@@ -291,36 +291,105 @@ sys_fork(struct trapframe *tf, pid_t *retval){
 }
 
 int
-sys_execv(int *retval, char *program, userptr_t args){
+sys_execv(int *retval, userptr_t program, userptr_t args){
     
     int result;
-    
-    (void) args;
     
     *retval = -1;
     //int argc = 0;
     
-    result = runprog(program);
+    // copy arguments and program name into the kernal
+    char argc = 0;
+    char **argcpy = copying_arg(program, args, &argc); // argc are expected to be at least 1
+    
+    if (argcpy == NULL){
+        return E2BIG; // out of memory
+    }
+    
+    result = runprog(argc, argcpy, true);
     
     return result;
 }
 
+char **
+copying_arg(userptr_t program, userptr_t args, char *count){
+    
+    // count the number of args
+    int arg_count = 1;
+    char **current_arg = (char ** )args;
+    
+    while (current_arg != NULL){
+        arg_count++;
+        current_arg++;
+    }
+    
+    //allocate args, giving one extra NULL pointer at the end to avoid errors
+    char **arg_return = kmalloc(sizeof(char *) * (arg_count+1));
+    
+    if (arg_return == NULL){
+        return NULL; // out of memory
+    }
+    
+    //copy the program name as the first arguement
+    arg_retrun[0] = kstrdup((const char *) program);
+    if (arg_return[0] == NULL){
+        kfree(arg_retrun);
+        return NULL; // out of memory
+    }
+    
+    //Assign all NULL pointers
+    for (int i = 1; i < arg_count + 1; i++){
+        arg_return[i] = NULL;
+    }
+    
+    //copy args
+    current_arg = (char **) args; // starting from argument 0
+    for (int i = 1; i < arg_count; i++){
+        arg_return = kstrdup((const char *) current_arg[i-1]);
+        
+        // perform cleanup if error
+        if (arg_return[i] == NULL){
+            runprog_cleanup(arg_count, arg_return);
+            break;
+        }
+    }
+    
+    *count = arg_count;
+    
+    return arg_return;
+}
+
+void runprog_cleanup(int argc, char **args){
+    
+    for (int i = 0 ; i < argc; i ++){
+        if (args[i] != NULL){
+            kfree(args[i]);
+        }
+    }
+    
+    kfree(args);
+}
+
+
 int
-runprog(char *progname)
+runprog(int arg_count, char **args, bool km_used)
 {
-	struct addrspace *as;
+	struct addrspace *as, *oldas;
 	struct vnode *v;
 	vaddr_t entrypoint, stackptr;
 	int result;
 
+    char *progname = kstrdup(args[0]);
+    if (progname == NULL){
+        return E2BIG;
+    }
+    
 	/* Open the file. */
 	result = vfs_open(progname, O_RDONLY, 0, &v);
+    kfree(progname); // free the name
 	if (result) {
 		return result;
 	}
-
-	/* We should be a new process. */
-	//KASSERT(curproc_getas() == NULL);
 
 	/* Create a new address space. */
 	as = as_create();
@@ -330,15 +399,22 @@ runprog(char *progname)
 	}
 
 	/* Switch to it and activate it. */
-	curproc_setas(as);
+	oldas = curproc_setas(as);
 	as_activate();
 
 	/* Load the executable. */
 	result = load_elf(v, &entrypoint);
-
 	if (result) {
 		/* p_addrspace will go away when curproc is destroyed */
 		vfs_close(v);
+        // cleanup and reactivate old address space (execv should maintain the original process if it failed)
+        as_deactivate();
+        as_destroy(as);
+        
+        if (oldas){
+            curproc_setas(oldas);
+            as_activate();
+        }
 		return result;
 	}
 
@@ -349,16 +425,54 @@ runprog(char *progname)
 	result = as_define_stack(as, &stackptr);
 	if (result) {
 		/* p_addrspace will go away when curproc is destroyed */
+        as_deactivate();
+        as_destroy(as);
+        
+        if (oldas){
+            curproc_setas(oldas);
+            as_activate();
+        }
 		return result;
 	}
 
+    userptr_t user_arg = args_to_userspace(&stackptr, argc, args);
+    
+    if (km_used){
+        runprog_cleanup(arg_count, args);
+    }
+
 	/* Warp to user mode. */
-	enter_new_process(0 /*argc*/, NULL /*userspace addr of argv*/,
-			  stackptr, entrypoint);
+	enter_new_process(arg_count, user_arg, stackptr, entrypoint); // align arguments to the user stack
 	
 	/* enter_new_process does not return. */
 	panic("enter_new_process returned\n");
 	return EINVAL;
+}
+
+userptr_t
+args_to_userspace(vaddr_t *stackptr, int argc, char **args)vad
+{
+    vaddr_t stackpt = *stackptr;
+    
+    char **user_arg;
+    
+    stackptr -= sizeof(char *) * (argc + 1); // give enough space to the stack
+    user_arg = (char **)stackpt;
+    
+    //copy the strings to the stack
+    for (int i = 0; i < argc; i++){
+        int len = strlen(args[i]) + 1;
+        // move stack ptr
+        stackpt -= len;
+        user_stack[i] = (char *) stackpt;
+        copyout((const void *) args[i], (userptr_t) stackptr, len);
+    }
+    
+    user_arg[argc] = NULL; // append a null to the end the user stack
+    
+    *stackptr = stackpt;
+    
+    return (userptr_t) user_arg;
 }
 
 #endif /* OPT_A2 */

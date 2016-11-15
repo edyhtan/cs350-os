@@ -68,15 +68,11 @@ runprogram(char *program)
 	int result;
     
     #if OPT_A2
-    char *progname = kstrdup(argv[0]);
+    char *progname = argv[0];
     #endif
 
 	/* Open the file. */
 	result = vfs_open(progname, O_RDONLY, 0, &v);
-    
-    #if OPT_A2
-    kfree(progname);
-    #endif
     
 	if (result) {
 		return result;

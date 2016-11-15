@@ -70,6 +70,8 @@ runprogram(char *program)
     #if OPT_A2
     char *progname = argv[0];
     #endif
+    
+    kprintf ("hello\n")
 
 	/* Open the file. */
 	result = vfs_open(progname, O_RDONLY, 0, &v);

@@ -53,17 +53,30 @@
  *
  * Calls vfs_open on progname and thus may destroy it.
  */
- 
+
 int
-runprogram(char *progname)
+#if OPT_A2
+runprogram(int *argc, char **argv, bool clean_kernal)
+#else
+runprogram(char *program)
+#endif
 {
 	struct addrspace *as;
 	struct vnode *v;
 	vaddr_t entrypoint, stackptr;
 	int result;
+    
+    #if OPT_A2
+    char *progname = kstrdup(argv[0]);
+    #endif
 
 	/* Open the file. */
 	result = vfs_open(progname, O_RDONLY, 0, &v);
+    
+    #if OPT_A2
+    kfree(progname);
+    #endif
+    
 	if (result) {
 		return result;
 	}
@@ -100,13 +113,53 @@ runprogram(char *progname)
 		/* p_addrspace will go away when curproc is destroyed */
 		return result;
 	}
+    
+    #if OPT_A2
+    // copy arguments on to the stack
+    userptr_t user_arg = copy_to_userspace(&stackptr, argc, argv);
+    
+    if (clean_kernal){
+        runprog_cleanup(argc, argv);
+    }
+    
+    enter_new_process(argc /*argc*/, user_arg /*userspace addr of argv*/,
+			  stackptr, entrypoint);
+    
 
+    #else
 	/* Warp to user mode. */
 	enter_new_process(0 /*argc*/, NULL /*userspace addr of argv*/,
 			  stackptr, entrypoint);
-	
+	#endif
+    
 	/* enter_new_process does not return. */
 	panic("enter_new_process returned\n");
 	return EINVAL;
 }
 
+#if OPT_A2
+userptr_t
+copy_to_userspace(vaddr_t *stackptr_, int argc, char **argv)
+{
+	vaddr_t stackptr = *stackptr_;
+
+	char **user_argv;
+	//First, make space for an argv
+	stackptr -= sizeof(char *) * (argc + 1);
+	user_argv = (char **)stackptr;
+	//Then, copy each string in argv
+	for(int i = 0; i < argc; i++) {
+		int length = strlen(argv[i]) + 1;
+		//Move stack ptr
+		stackptr -= length;
+		//Set the ptr in argv
+		user_argv[i] = (char *)stackptr;
+		copyout((const void *) argv[i], (userptr_t) stackptr, length);
+	}
+	user_argv[argc] = NULL;
+
+	*stackptr_ = stackptr;
+
+	return (userptr_t) user_argv;
+}
+#endif

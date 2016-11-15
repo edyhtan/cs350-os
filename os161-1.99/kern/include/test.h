@@ -82,8 +82,13 @@ int malloctest(int, char **);
 int mallocstress(int, char **);
 int nettest(int, char **);
 
+#if OPT_A2
+int runprogram(int argc, char **argv, bool clean_kernal);
+userptr_t copy_to_userspace(vaddr_t *stackptr_, int argc, char **argv);
+#else
 /* Routine for running a user-level program. */
 int runprogram(char *progname);
+#endif
 
 /* Kernel menu system. */
 void menu(char *argstr);

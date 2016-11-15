@@ -318,10 +318,14 @@ copying_arg(userptr_t program, userptr_t args, int *count){
     int arg_count = 1;
     char **current_arg = (char ** )args;
     
+    kprintf("here\n");
+    
     while (current_arg != NULL){
         arg_count++;
         current_arg++;
     }
+    
+    kprintf("there\n");
     
     //allocate args, giving one extra NULL pointer at the end to avoid errors
     char **arg_return = kmalloc(sizeof(char *) * (arg_count+1));

@@ -107,7 +107,7 @@ cmd_progthread(void *ptr, unsigned long nargs)
 
     #if OPT_A2
     (void) progname;
-    result = runprogram(nargs, args);
+    result = runprogram((int)nargs, args);
     #else
 	KASSERT(nargs >= 1);
 

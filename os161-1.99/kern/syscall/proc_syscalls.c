@@ -299,7 +299,7 @@ sys_execv(int *retval, userptr_t program, userptr_t args){
     //int argc = 0;
     
     // copy arguments and program name into the kernal
-    int argc = 0;
+    int argc;
     char **argcpy = copying_arg(program, args, &argc); // argc are expected to be at least 1
     
     if (argcpy == NULL){

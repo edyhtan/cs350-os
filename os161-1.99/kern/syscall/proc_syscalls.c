@@ -299,7 +299,7 @@ sys_execv(int *retval, userptr_t program, userptr_t args){
     //int argc = 0;
     
     // copy arguments and program name into the kernal
-    char argc = 0;
+    int argc = 0;
     char **argcpy = copying_arg(program, args, &argc); // argc are expected to be at least 1
     
     if (argcpy == NULL){
@@ -333,7 +333,7 @@ copying_arg(userptr_t program, userptr_t args, int *count){
     //copy the program name as the first arguement
     arg_return[0] = kstrdup((const char *) program);
     if (arg_return[0] == NULL){
-        kfree(arg_retrun);
+        kfree(arg_return);
         return NULL; // out of memory
     }
     
@@ -464,7 +464,7 @@ args_to_userspace(vaddr_t *stackptr, int argc, char **args)
         int len = strlen(args[i]) + 1;
         // move stack ptr
         stackpt -= len;
-        user_stack[i] = (char *) stackpt;
+        user_arg[i] = (char *) stackpt;
         copyout((const void *) args[i], (userptr_t) stackptr, len);
     }
     

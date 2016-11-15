@@ -67,10 +67,12 @@ runprogram(char *program)
 	vaddr_t entrypoint, stackptr;
 	int result;
     
+    kprintf("3.5\n");
     #if OPT_A2
     char *progname = argv[0];
     #endif
     
+     kprintf("4\n");
 	/* Open the file. */
 	result = vfs_open(progname, O_RDONLY, 0, &v);
 
@@ -122,7 +124,6 @@ runprogram(char *program)
     enter_new_process(argc /*argc*/, user_arg /*userspace addr of argv*/,
 			  stackptr, entrypoint);
     
-    kprintf("4\b");
     
     #else
 	/* Warp to user mode. */

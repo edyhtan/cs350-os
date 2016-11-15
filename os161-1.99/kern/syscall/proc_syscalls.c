@@ -442,7 +442,7 @@ runprog(int arg_count, char **args, bool km_used)
     }
     
 	/* Warp to user mode. */
-	enter_new_process(arg_count, user_arg, stackptr, entrypoint);
+	enter_new_process(0, NULL, stackptr, entrypoint);
 	
 	/* enter_new_process does not return. */
 	panic("enter_new_process returned\n");

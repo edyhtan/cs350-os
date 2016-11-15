@@ -434,8 +434,6 @@ runprog(int arg_count, char **args, bool km_used)
         }
 		return result;
 	}
-
-    kprintf("here\n");
     
     userptr_t user_arg = args_to_userspace(&stackptr, arg_count, args);
     
@@ -454,7 +452,6 @@ runprog(int arg_count, char **args, bool km_used)
 userptr_t
 args_to_userspace(vaddr_t *stackptr, int argc, char **args)
 {
-    kprintf("here2\n");
     vaddr_t stackpt = *stackptr;
     char **user_arg;
     
@@ -473,6 +470,8 @@ args_to_userspace(vaddr_t *stackptr, int argc, char **args)
     user_arg[argc] = NULL; // append a null to the end the user stack
     
     *stackptr = stackpt;
+    
+    kprintf("here3\n");
     
     return (userptr_t) user_arg;
 }

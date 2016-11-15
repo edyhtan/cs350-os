@@ -56,7 +56,7 @@
 
 int
 #if OPT_A2
-runprogram(int *argc, char **argv, bool clean_kernal)
+runprogram(int argc, char **argv, bool clean_kernal)
 #else
 runprogram(char *program)
 #endif

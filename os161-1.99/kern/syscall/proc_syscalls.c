@@ -441,7 +441,7 @@ runprog(int arg_count, char **args, bool km_used)
         runprog_cleanup(arg_count, args);
     }
     
-    (void) user_arg;
+    //(void) user_arg;
     
 	/* Warp to user mode. */
 	enter_new_process(0, NULL, stackptr, entrypoint);

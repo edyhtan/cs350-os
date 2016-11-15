@@ -70,7 +70,7 @@ int sys_waitpid(pid_t pid, userptr_t status, int options, pid_t *retval);
 
 #if OPT_A2
 int sys_fork(struct trapframe *tf, pid_t *retval);
-int sys_execv(int *retval, userptr_t *program, userptr_t args);
+int sys_execv(int *retval, userptr_t program, userptr_t args);
 char **copying_arg(userptr_t program, userptr_t args, int *count);
 void runprog_cleanup(int argc, char **argv);
 int runprog(int args_count, char **args, bool using_kernel_mem);

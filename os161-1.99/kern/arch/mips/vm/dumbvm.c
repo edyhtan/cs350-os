@@ -204,7 +204,7 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 		ehi = faultaddress;
 		elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
 #if OPT_A3
-        if (curproc->loaded && RO){
+        if (as->loaded && RO){
             elo &= ~TLBLO_DIRTY;
         }
 #endif
@@ -218,7 +218,7 @@ vm_fault(int faulttype, vaddr_t faultaddress)
     ehi = faultaddress;
     elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
     
-    if (curproc->loaded && RO){
+    if (as->loaded && RO){
         elo &= ~TLBLO_DIRTY;
     }
     

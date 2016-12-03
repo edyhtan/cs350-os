@@ -177,7 +177,7 @@ free_kpages(vaddr_t addr)
     
     int mem_free = i + framelist[i].continuous_memory;
     
-    for (int j = i; j < mem_free; j++ ){
+    for (int j = i; j <= mem_free; j++ ){
         framelist[j].used = false;
     }
     

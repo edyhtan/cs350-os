@@ -136,7 +136,7 @@ getppages(unsigned long npages)
         for (int j = start; j <= i; j++){
             framelist[j].used = true;
             if (j > start){
-                framlist[j-1].nextFrame = framelist[j]; // link previous frame
+                framelist[j-1].nextFrame = framelist[j]; // link previous frame
             }
         }
         

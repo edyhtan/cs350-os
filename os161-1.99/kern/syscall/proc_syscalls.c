@@ -58,9 +58,7 @@ void sys__exit(int exitcode) {
       if (children->exit_status == true){
         struct process_info *del = children;
         pid_table[children->pid] = false;
-        proc_destroy(children);
         destroy_pinfo(del);
-        
         children = children->next_sibling;
         
         // link the previous and the next one
@@ -75,23 +73,20 @@ void sys__exit(int exitcode) {
       }
   }
   
-  proc_remthread(curthread);
-  
    // change status
   pinfo->exit_status = true;
-  pinfo->exit_code = _MKWAIT_EXIT(exitcode);
+  pinfo->exit_code = exitcode;
   
   if (pinfo->parent == NULL){
       // since there's no parent, the exit status is not insteresting
       pid_table[pinfo->pid] = false;
       destroy_pinfo(pinfo);
-      proc_destroy(p);
   }
   
   cv_broadcast(pid_table_cv, pid_table_lock);
   lock_release(pid_table_lock);
   
-#else
+#endif
   /* detach this thread from its process */
   /* note: curproc cannot be used after this call */
   proc_remthread(curthread);
@@ -99,8 +94,6 @@ void sys__exit(int exitcode) {
   /* if this is the last user process in the system, proc_destroy()
      will wake up the kernel menu thread */
   proc_destroy(p);  
-  
-#endif
 
   thread_exit();
   

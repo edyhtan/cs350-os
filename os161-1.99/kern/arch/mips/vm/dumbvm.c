@@ -54,12 +54,12 @@
 struct VMFrame{
     paddr_t paddr;
     bool used;
-    VMFrame *nextFrame; // we will also free the next continuous frame if needed
+    struct VMFrame *nextFrame; // we will also free the next continuous frame if needed
 }
 
-volatile bool boot_complete = false;
-int num_of_frame = 0;
-struct VMFrame * framelist;
+static volatile bool boot_complete = false;
+static int num_of_frame = 0;
+static struct VMFrame * framelist;
 
 
 #endif
@@ -80,7 +80,7 @@ vm_bootstrap(void)
     num_of_frame = ((pmEnd - pmBase) / PAGE_SIZE);
     
     // reserve spaces for core map itself
-    pmStart = pMemBase + num_of_frame*sizeof(struct VMFrame);
+    pmStart = pmBase + num_of_frame*sizeof(struct VMFrame);
     pmStart = ROUNDUP(pmStart, PAGE_SIZE);
     
     // manually allocates core map
@@ -91,8 +91,8 @@ vm_bootstrap(void)
         framelist[i].paddr = pMemBase + (i * PAGE_SIZE);
         framelist[i].used = false;
         framelist[i].nextFrame = NULL;
-        if(frameList[i].pAddress < pMemStart){
-            frameList[i].inUse = true;
+        if(framelist[i].pAddress < pmStart){
+            framelist[i].inUse = true;
             if ( i > 0) {
                 frameList[i-1].nextFrame = &frameList[i];
             }
@@ -184,7 +184,7 @@ free_kpages(vaddr_t addr)
     VMFrame *current = &framelist[i];
     
     while (current != NULL){
-        VMFrame *temp = current;
+        struct VMFrame *temp = current;
         temp->used = false;
         current = temp->nextFrame;
         temp->nextFrame = NULL;

@@ -55,7 +55,7 @@ struct VMFrame{
     paddr_t paddr;
     bool used;
     struct VMFrame *nextFrame; // we will also free the next continuous frame if needed
-}
+};
 
 bool boot_complete = false;
 int num_of_frame = 0;

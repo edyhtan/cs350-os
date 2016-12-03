@@ -54,7 +54,7 @@
 struct VMFrame{
     paddr_t paddr;
     bool used;
-    struct VMFrame *nextFrame; // we will also free the next continuous frame if needed
+    int continuous_memory = 0; // we will also free the next continuous frame if needed
 };
 
 bool boot_complete = false;
@@ -92,9 +92,6 @@ vm_bootstrap(void)
         framelist[i].nextFrame = NULL;
         if(framelist[i].paddr < pmStart){
             framelist[i].used = true;
-            if ( i > 0) {
-                framelist[i-1].nextFrame = &framelist[i];
-            }
         }
     }
     
@@ -131,13 +128,11 @@ getppages(unsigned long npages)
             }
         }
         
-        int start = i - avaliable + 1;
+        int start = i - (avaliable - 1);
+        framlist[start].continuous_memory = avaliable-1;
         
         for (int j = start; j <= i; j++){
             framelist[j].used = true;
-            if (j > start){
-                framelist[j-1].nextFrame = &framelist[j]; // link previous frame
-            }
         }
         
         addr = framelist[start].paddr;
@@ -180,13 +175,10 @@ free_kpages(vaddr_t addr)
         }
     }
     
-    struct VMFrame *current = &framelist[i];
+    int mem_free = i + framelist[i].continuous_memory;
     
-    while (current != NULL){
-        struct VMFrame *temp = current;
-        temp->used = false;
-        current = temp->nextFrame;
-        temp->nextFrame = NULL;
+    for (int j = i; j < mem_free; j++ ){
+        framelist[j].used = false;
     }
     
     spinlock_release(&stealmem_lock);

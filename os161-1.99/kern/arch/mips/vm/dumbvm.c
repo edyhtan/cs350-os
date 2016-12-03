@@ -180,7 +180,7 @@ free_kpages(vaddr_t addr)
         }
     }
     
-    VMFrame *current = &framelist[i];
+    struct VMFrame *current = &framelist[i];
     
     while (current != NULL){
         struct VMFrame *temp = current;

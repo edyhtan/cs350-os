@@ -48,6 +48,21 @@
 /* under dumbvm, always have 48k of user stack */
 #define DUMBVM_STACKPAGES    12
 
+
+#if OPT_A3
+
+struct VMFrame{
+    paddr_t paddr;
+    bool used;
+    VMFrame *nextFrame; // we will also free the next continuous frame if needed
+}
+
+volatile bool boot_complete = false;
+int num_of_frame = 0;
+struct VMFrame * framelist;
+
+
+#endif
 /*
  * Wrap rma_stealmem in a spinlock.
  */
@@ -56,7 +71,36 @@ static struct spinlock stealmem_lock = SPINLOCK_INITIALIZER;
 void
 vm_bootstrap(void)
 {
-	/* Do nothing. */
+#if OPT_A3
+    paddr_t pmBase;
+    paddr_t pmStart;
+    paddr_t pmEnd;
+    
+    ram_getsize(&pmBase, &pmEnd);
+    num_of_frame = ((pmEnd - pmBase) / PAGE_SIZE);
+    
+    // reserve spaces for core map itself
+    pmStart = pMemBase + num_of_frame*sizeof(struct VMFrame);
+    pmStart = ROUNDUP(pmStart, PAGE_SIZE);
+    
+    // manually allocates core map
+    framelist = (struct VMFrame * ) PADDR_TO_KVADDR(pmBase);
+    
+    // creating information for the core map
+    for (int i = 0; i < num_of_frame; i++){
+        framelist[i].paddr = pMemBase + (i * PAGE_SIZE);
+        framelist[i].used = false;
+        framelist[i].nextFrame = NULL;
+        if(frameList[i].pAddress < pMemStart){
+            frameList[i].inUse = true;
+            if ( i > 0) {
+                frameList[i-1].nextFrame = &frameList[i];
+            }
+        }
+    }
+    
+    boot_complete = true;
+#endif
 }
 
 static
@@ -67,7 +111,41 @@ getppages(unsigned long npages)
 
 	spinlock_acquire(&stealmem_lock);
 
-	addr = ram_stealmem(npages);
+#if OPT_A3
+    if (!boot_complete) {
+        addr = ram_stealmem(npages); // kernal is allow to steal mem
+    }else {
+        // first-fit:
+        int i = 0;
+        int avaliable = 0;
+        
+        for ( ; i < num_of_frame ; i++){
+            if (framelist[i].used == true){
+                avaliable = 0; // we start over and find a new place for it
+                continue;
+            }
+            
+            avaliable++;
+            
+            if (avaliable == (int) npages){
+                break;
+            }
+        }
+        
+        int start = i - avaliable + 1;
+        
+        for (int j = start; j <= i; j++){
+            framelist[j].used = true;
+            if (j > start){
+                framlist[j-1].nextFrame = framelist[j]; // link previous frame
+            }
+        }
+        
+        addr = framelist[start].paddr;
+    }
+#else
+    addr = ram_stealmem(npages);
+#endif 
 	
 	spinlock_release(&stealmem_lock);
 	return addr;
@@ -88,9 +166,34 @@ alloc_kpages(int npages)
 void 
 free_kpages(vaddr_t addr)
 {
-	/* nothing - leak the memory. */
+#if OPT_A3
+    spinlock_acquire(&stealmem_lock);
+	// linear search for the address
+    
+    //convert virtual address to paddress
+    paddr_t free = addr - MIPS_KSEG0;
 
-	(void)addr;
+    int i = 0;
+    
+    for ( ; i < num_of_frame ; i++ ){
+        if (framelist[i].paddr == free){
+            break;
+        }
+    }
+    
+    VMFrame *current = &framelist[i];
+    
+    while (current != NULL){
+        VMFrame *temp = current;
+        temp->used = false;
+        current = temp->nextFrame;
+        temp->nextFrame = NULL;
+    }
+    
+    spinlock_release(&stealmem_lock);
+#else
+    (void) addr;
+#endif
 }
 
 void
@@ -259,6 +362,12 @@ as_create(void)
 void
 as_destroy(struct addrspace *as)
 {
+#if OPT_A3
+ 	kfree((void *)PADDR_TO_KVADDR(as->as_pbase1));
+ 	kfree((void *)PADDR_TO_KVADDR(as->as_pbase2));
+ 	kfree((void *)PADDR_TO_KVADDR(as->as_stackpbase));
+#endif
+ 	kfree(as);
 	kfree(as);
 }
 

@@ -54,7 +54,7 @@
 struct VMFrame{
     paddr_t paddr;
     bool used;
-    int continuous_memory = 0; // we will also free the next continuous frame if needed
+    int continuous_memory; // we will also free the next continuous frame if needed
 };
 
 bool boot_complete = false;
@@ -89,7 +89,7 @@ vm_bootstrap(void)
     for (int i = 0; i < num_of_frame; i++){
         framelist[i].paddr = pmBase + (i * PAGE_SIZE);
         framelist[i].used = false;
-        framelist[i].nextFrame = NULL;
+        framelist[i].continuous_memory = 0;
         if(framelist[i].paddr < pmStart){
             framelist[i].used = true;
         }
@@ -129,7 +129,7 @@ getppages(unsigned long npages)
         }
         
         int start = i - (avaliable - 1);
-        framlist[start].continuous_memory = avaliable-1;
+        framelist[start].continuous_memory = avaliable-1;
         
         for (int j = start; j <= i; j++){
             framelist[j].used = true;

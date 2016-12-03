@@ -57,7 +57,7 @@ struct VMFrame{
     struct VMFrame *nextFrame; // we will also free the next continuous frame if needed
 }
 
-volatile bool boot_complete = false;
+bool boot_complete = false;
 int num_of_frame = 0;
 struct VMFrame * framelist;
 
@@ -93,7 +93,7 @@ vm_bootstrap(void)
         if(framelist[i].paddr < pmStart){
             framelist[i].used = true;
             if ( i > 0) {
-                frameList[i-1].nextFrame = &frameList[i];
+                framelist[i-1].nextFrame = &framelist[i];
             }
         }
     }

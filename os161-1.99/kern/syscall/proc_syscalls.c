@@ -58,7 +58,7 @@ void sys__exit(int exitcode) {
       if (children->exit_status == true){
         struct process_info *del = children;
         pid_table[children->pid] = false;
-        proc_destory(childrean);
+        proc_destroy(childrean);
         destroy_pinfo(del);
         
         children = children->next_sibling;
@@ -83,7 +83,7 @@ void sys__exit(int exitcode) {
       // since there's no parent, the exit status is not insteresting
       pid_table[pinfo->pid] = false;
       destroy_pinfo(pinfo);
-      proc_destory(p);
+      proc_destroy(p);
   }
   
   cv_broadcast(pid_table_cv, pid_table_lock);

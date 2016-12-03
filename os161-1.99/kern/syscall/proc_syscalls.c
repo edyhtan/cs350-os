@@ -58,7 +58,7 @@ void sys__exit(int exitcode) {
       if (children->exit_status == true){
         struct process_info *del = children;
         pid_table[children->pid] = false;
-        proc_destroy(childrean);
+        proc_destroy(children);
         destroy_pinfo(del);
         
         children = children->next_sibling;
@@ -74,6 +74,8 @@ void sys__exit(int exitcode) {
         children = children->next_sibling;
       }
   }
+  
+  proc_remthread(curthread);
   
    // change status
   pinfo->exit_status = true;

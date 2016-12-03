@@ -359,7 +359,6 @@ as_destroy(struct addrspace *as)
  	kfree((void *)PADDR_TO_KVADDR(as->as_stackpbase));
 #endif
  	kfree(as);
-	kfree(as);
 }
 
 void

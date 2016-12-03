@@ -57,10 +57,9 @@ struct VMFrame{
     struct VMFrame *nextFrame; // we will also free the next continuous frame if needed
 }
 
-static volatile bool boot_complete = false;
-static int num_of_frame = 0;
-static struct VMFrame * framelist;
-
+volatile bool boot_complete = false;
+int num_of_frame = 0;
+struct VMFrame * framelist;
 
 #endif
 /*
@@ -88,11 +87,11 @@ vm_bootstrap(void)
     
     // creating information for the core map
     for (int i = 0; i < num_of_frame; i++){
-        framelist[i].paddr = pMemBase + (i * PAGE_SIZE);
+        framelist[i].paddr = pmBase + (i * PAGE_SIZE);
         framelist[i].used = false;
         framelist[i].nextFrame = NULL;
-        if(framelist[i].pAddress < pmStart){
-            framelist[i].inUse = true;
+        if(framelist[i].paddr < pmStart){
+            framelist[i].used = true;
             if ( i > 0) {
                 frameList[i-1].nextFrame = &frameList[i];
             }
